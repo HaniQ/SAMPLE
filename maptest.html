@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Marker Labels</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?libraries=drawing"></script>
+      
+    <script>
+
+      // In the following example, markers appear when the user clicks on the map.
+      // Each marker is labeled with a single alphabetical character.
+      var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      var labelIndex = 0;
+
+      function initialize() {
+        
+        var CustomStrokeOpac = 0;
+        
+        JSlat = {{LATpy}};
+        JSlong = {{LONGpy}};
+        
+        Start_Lat = 53.47541458927207;
+        Start_Long = -2.2344839572906494;
+        
+        var sackville = { lat: Start_Lat, lng: Start_Long };             //This could be current GPS co ordinate of tank8. A dynamic value from the server backend would update tis value with tank co-ordinate
+        var Destination = { lat: JSlat, lng: JSlong };
+        
+        //THIS SECTION IS TO ALLOW THE USER TO DRAW SHAPES ON THE MAP
+          var drawingManager = new google.maps.drawing.DrawingManager({
+          drawingMode: google.maps.drawing.OverlayType.MARKER,
+          drawingControl: true,
+          drawingControlOptions: {
+            position: google.maps.ControlPosition.TOP_CENTER,
+            drawingModes: ['marker', 'circle', 'polygon', 'polyline', 'rectangle']
+          },
+          markerOptions: {icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'},
+          circleOptions: {
+            fillColor: '#ffff00',
+            fillOpacity: 1,
+            strokeWeight: 5,
+            clickable: false,
+            editable: true,
+            zIndex: 1
+          }
+        });
+          //USER DRAWN SHAPES SECTION END------------------------------------//
+        
+        //This section is to draw a polyline from starting destination to ending destination
+        var flightPlanCoordinates = [
+          {lat: Start_Lat, lng: Start_Long},
+          {lat: JSlat, lng: JSlong}
+
+        ];
+        
+        if( (JSlat == 0) ) {
+          CustomStrokeOpac = 0;
+        }
+        else {
+          CustomStrokeOpac = 1.0;
+        }
+        
+        document.getElementById('DestLat').innerHTML = "Destination latitide is: " + JSlat;
+        document.getElementById('DestLong').innerHTML = "Destination longitude is: " + JSlong;
+        
+        var flightPath = new google.maps.Polyline({
+          path: flightPlanCoordinates,
+          geodesic: true,
+          strokeColor: '#FF0000',
+          strokeOpacity: CustomStrokeOpac,
+          strokeWeight: 2
+        });
+
+  
+      //---------------------POLYLINE SECTION END-----------------------------------------------//
+        
+        //This section is to add info windows on start markers,
+        var contentString1 = '<div id="content">'+
+            '<div id="siteNotice">'+
+            '</div>'+
+            '<h1 id="firstHeading" class="firstHeading">Team8 Tank</h1>'+
+            '<div id="bodyContent">'+
+            '<p>This is the current GPS co-ordinate of the team8 multi-purpose tank. Through this map, the tank is able to be controlled remotely simply through clicking on a destination on the map (marked by a finish flag). Press the submit button when sure of the destination. The back-end algorithm will handle the movement of the buggy to the chosen finishing spot. In the future after pressing submit a dynamic window will pop up where the path of the tank approaching the ending destiantion will be visualised.</p>'+
+            '</div>'+
+            '</div>';
+            
+        var infowindow1 = new google.maps.InfoWindow({
+          content: contentString1
+        });
+        
+       
+        // ------------------------------INFOWINDOW SECTION END-----------------------------//
+        
+        //MAIN GOOGLE MAP CREATION INSTANCE
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 20,
+          center: sackville,
+          mapTypeId: google.maps.MapTypeId.HYBRID  
+        });
+        
+
+        // This event listener calls addMarker() when the map is clicked.
+        google.maps.event.addListener(map, 'click', function(event) {
+          addMarker(event.latLng, map);
+       
+       
+        x = JSON.stringify(event.latLng);     // Converting event.latLng which is an object into a string containing both lat and longitudes. Since the variable itself is an object containing both lat and long, a lot of string conversion and manipulation has to be carried out to get separate decimal lat and long
+        
+        //A LOT OF STRING SLICING AND CONVERSION. THERE HAS TO BE AN EASIER WAY THAN THIS BUT WITH MY LIMITED JS KNOWLEDGE THIS WAS WHAT I HACKED TOGETHER TO GET THE JOB DONE
+        
+        SlicedLat = x.slice(7,29);            // Slicing the above string to just lat 
+        SlicedLong = x.slice(29,53);          //Slicing rest of it into longitude 
+        
+        LatLastCommaIndex = SlicedLat.lastIndexOf(",") ;
+        FinalSlicedLat = SlicedLat.slice(0,(LatLastCommaIndex));
+        
+        LongFirstSemiColonIndex = SlicedLong.indexOf(":") ;
+        LongLastCurlyBracketIndex = SlicedLong.lastIndexOf("}") ;
+        FinalSlicedLong = SlicedLong.slice(LongFirstSemiColonIndex+1,LongLastCurlyBracketIndex) ; //The variable names might look stupid but this is the only way I remember what they do
+        //STRING SLICING END
+        
+         document.getElementById('1HEAD').innerHTML = x;
+      
+          var TheTextBox1 = document.getElementById("idTEXT1");
+          TheTextBox1.value = FinalSlicedLat;
+          
+          var TheTextBox2 = document.getElementById("idTEXT2");
+          TheTextBox2.value = FinalSlicedLong;
+
+        
+        //jQuery(function(){
+          //jQuery('#idSubmit').click();      
+              //});
+        
+        });
+
+
+          // Add a marker at the Tank starting position on the map, with a tank icon image
+          var Tank_Image;
+          if(Start_Long > JSlong) {
+            Tank_Image = "http://i.imgur.com/GdkfuEh.png"       //Tank image icon face left       
+          }
+          else {
+            Tank_Image = "http://i.imgur.com/gyMGJOL.png"       //Tank image icon face right
+          }
+          var Start_Marker = new google.maps.Marker({
+          position: sackville,                                   
+          label: labels[0],
+          map: map,
+          icon: Tank_Image
+        });
+          Start_Marker.addListener('click', function() {
+          infowindow1.open(map, Start_Marker);
+        });
+      
+        
+        
+        addMarker(Destination, map);        // Add marker to destination through previous form
+        flightPath.setMap(map);             //Add the polylines
+        drawingManager.setMap(map);          // add the interface to let users draw shapes
+
+      }
+
+      // Adds a marker to the map.
+      function addMarker(location, map) {
+        // Add the marker at the clicked location, and add the next-available label
+        // from the array of alphabetical characters.
+        var Finish_Flag = "http://i.imgur.com/flzzJGj.png"
+        var marker = new google.maps.Marker({
+          position: location,                                 
+          label: labels[2],
+          map: map,
+          icon: Finish_Flag
+        });
+             
+      }
+
+      google.maps.event.addDomListener(window, 'load', initialize);
+      
+
+    </script>
+  </head>
+  <body>
+    <div id="map"></div>
+    <br>
+    <br>
+    
+    <div>
+       <!-- Search Form.  INSTEAD OF action going to google/search it has been edited to go to decipher function on Rclaw.py-->
+      <form id="idPOSITION" method="POST" action="{{ url_for('PRINTps') }}">
+      <div class="speech">
+      <input type="text" name="LAT" id="idTEXT1" placeholder="Enter Latitude" />
+      <input type="text" name="LONG" id="idTEXT2" placeholder="Enter Longitude" />
+       <input type="submit" id="idSubmit" />
+      </div>
+      </form>
+      
+    </div>
+    
+    <h1 id="1HEAD">String readings</h1>
+    
+    <br>
+    
+    <h1 id="DestLat">Waiting for input</h1>
+     <h1 id="DestLong">Waiting for input</h1>
+    
+    
+    <!--onclick="window.open('http://192.168.137.214:5000/PRINTps')"--> 
+      
+  </body>
+</html>
