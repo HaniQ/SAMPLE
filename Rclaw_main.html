@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <title>Manual Rclaw Browser based control</title>
+        
+    </head>
+    <body>
+            <h1>Manual input fields for both motors (Forward direction)</h1>
+          
+            <div id="content">
+                <form method="post" action="{{ url_for('ManualF') }}">
+                    
+                  <label for="Motor1">Please enter Motor 1 value from 0 to 100:</label>
+                  <input type="number" min="0" max="100" style="height:30px; width:380px" required name="Motor1" /><br /> <!----type might need to be numeric instead of number-->
+                  
+                  <br>
+                  
+                  <label for="Motor2">Please enter Motor 2 value from 0 to 100:</label>
+                  <input type="number" min="0" max="100" style="height:30px; width:380px" required name="Motor2" /><br />
+                  
+                <br>
+                  <input type="submit" />
+                </form>
+            </div>
+            
+            <br>
+            
+            <h1>Manual Control of tank using directional buttons:</h1>
+            
+            <a href="http://192.168.137.23:5000/forward"><img src="http://i.imgur.com/PDYegLB.jpg" alt="Forward Button" style="width:200px;height:200px;border:0; position:absolute; TOP:300px; LEFT:370px;" ></a>
+
+            <a href="http://192.168.137.23:5000/backward"><img src="http://i.imgur.com/w9HDuhK.jpg" alt="Backward Button" style="width:200px;height:200px;border:0; position:absolute; TOP:550px; LEFT:370px;" ></a>
+            
+            <a href="http://192.168.137.23:5000/left"><img src="http://i.imgur.com/XQOQXGJ.jpg" alt="Left Button" style="width:200px;height:200px;border:0; position:absolute; TOP:430px; LEFT:170px;" ></a>
+            
+            <a href="http://192.168.137.23:5000/right"><img src="http://i.imgur.com/AKl8MSF.jpg" alt="Right Button" style="width:200px;height:200px;border:0; position:absolute; TOP:420px; LEFT:570px;" ></a>
+            
+            <a href="http://192.168.137.23:5000/stop"><img src="http://i.imgur.com/dlE7NiU.png" alt="Stop Button" style="width:150px;height:150px;border:0; position:absolute; TOP:280px; LEFT:1px;" ></a>
+    </body>
+    
+    </html>
