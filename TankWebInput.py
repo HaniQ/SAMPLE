@@ -1,3 +1,9 @@
+#Author Ekram
+#This is a fusion of all the different web frameworks doing different things.
+#This will host a single root homepage on which some information about the project will be displayed
+#This web page will have links for manual control, google map control, voice rec control and visualisation of variables on the tank
+
+
 #Importing all the relevant stuff
 import time
 import sys
