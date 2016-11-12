@@ -1,7 +1,3 @@
-#Author Ekram
-#Experimental code to get tank to move via co-ordinates AND automatic spiral rectangle motion
-
-
 #Importing all the relevant stuff
 import time
 import sys
@@ -48,21 +44,24 @@ def AlignWest():       #This function will
     #Move motors to get to 270 degree
     
 
-#East and West mean right and left and north and south mean forward and backward
-def MapMotion(EndLat,EndLong):
+#East and West mean right and left and north and south mean forward and backward on specific frames
+def MapMotion(value1,value2):
     
     StartLat = 50       #This values will be obtained from GPS module and will be different each time this loop iterates
     StartLong = 60
     
+    value1 = EndLat
+    value2 = EndLong
+    
     Align = CompassDegree()             #This gives the degree which implies which direction tank is facing at start
     
     
-    if( (0<Align<45) or (315<Align<359) ):  #THIS TELLS THE BUGGY THAT ITS FRONT IS FACING NORTH
+    if( (0<=Align<=45) or (315<=Align<=359) ):  #THIS TELLS THE BUGGY THAT ITS FRONT IS FACING NORTH
         print ("FRONT OF TANK FACING NORTH")
         print ("FRONT OF TANK FACING NORTH")
         print ("FRONT OF TANK FACING NORTH")
         
-        while ( (0.98*EndLat)<StartLat<(1.02*EndLat) and (0.98*EndLong)<StartLong<(1.02*EndLong) ): #Main argument is checking if starting co-ordinates come to within +-2% of destination co-ordinates
+        while ( (0.98*EndLat)<=StartLat<=(1.02*EndLat) and (0.98*EndLong)<=StartLong<=(1.02*EndLong) ): #Main argument is checking if starting co-ordinates come to within +-2% of destination co-ordinates
             
             if(StartLat<EndLat):        #GO NORTH
                 
@@ -76,7 +75,7 @@ def MapMotion(EndLat,EndLong):
                     ForwardM2*(EndLat-StartLat)*KpLat*(StartLong-EndLong)*KpLong*FlatMotorValue
                     print ("GO NORTH WEST")
                     
-                elif( (0.98*EndLong)<StartLong<(1.02*EndLong) ):     #GO ONLY NORTH
+                elif( (0.98*EndLong)<=StartLong<=(1.02*EndLong) ):     #GO ONLY NORTH
                     ForwardM1*(EndLat-StartLat)*KpLat*FlatMotorValue
                     ForwardM2*(EndLat-StartLat)*KpLat*FlatMotorValue
                     print ("GO ONLY NORTH")
@@ -93,26 +92,70 @@ def MapMotion(EndLat,EndLong):
                     BackwardM2*(StartLat-EndLat)*KpLat*(StartLong-EndLong)*KpLong*FlatMotorValue
                     print ("GO SOUTH WEST")
                     
-                elif( (0.98*EndLong)<StartLong<(1.02*EndLong) ):     #GO ONLY SOUTH
+                elif( (0.98*EndLong)<=StartLong<=(1.02*EndLong) ):     #GO ONLY SOUTH
                     BackwardM1*(StartLat-EndLat)*KpLat*FlatMotorValue
                     BackwardM2*(StartLat-EndLat)*KpLat*FlatMotorValue
                     print ("GO ONLY SOUTH")
                     
+            elif((0.98*EndLat)<=StartLat<=(1.02*EndLat)):   #Do not go south or north/ go only east/west
+                
+                if( StartLong<EndLong ):
+                    MakeWideArcToGoEast
+                    
+                elif( StartLong>EndLong ):
+                    MakeWideArcToGoWest
+                    
 #--------------------------------------------------------------------------------------------------------------------#
                     
-    elif (135<Align<225):  #THIS TELLS THE BUGGY THAT ITS FRONT IS FACING SOUTH
+    elif (135<=Align<=225):  #THIS TELLS THE BUGGY THAT ITS FRONT IS FACING SOUTH
         print ("FRONT OF TANK FACING SOUTH")
         print ("FRONT OF TANK FACING SOUTH")
         print ("FRONT OF TANK FACING SOUTH")
+        
+        while ( (0.98*EndLat)<=StartLat<=(1.02*EndLat) and (0.98*EndLong)<=StartLong<=(1.02*EndLong) ): #Main argument is checking if starting co-ordinates come to within +-2% of destination co-ordinates
+            
+            if(StartLat<EndLat):        #GO NORTH
+                
+                if( StartLong<EndLong ):      #GO NORTH EAST
+                    ForwardM1*(EndLat-StartLat)*KpLat*(EndLong-StartLong)*KpLong*FlatMotorValue
+                    ForwardM2*(EndLat-StartLat)*KpLat*FlatMotorValue
+                    print ("GO NORTH EAST")
+                    
+                elif( StartLong>EndLong ):     #GO NORTH WEST 
+                    ForwardM1*(EndLat-StartLat)*KpLat*FlatMotorValue
+                    ForwardM2*(EndLat-StartLat)*KpLat*(StartLong-EndLong)*KpLong*FlatMotorValue
+                    print ("GO NORTH WEST")
+                    
+                elif( (0.98*EndLong)<=StartLong<=(1.02*EndLong) ):     #GO ONLY NORTH
+                    ForwardM1*(EndLat-StartLat)*KpLat*FlatMotorValue
+                    ForwardM2*(EndLat-StartLat)*KpLat*FlatMotorValue
+                    print ("GO ONLY NORTH")
+                    
+            elif(StartLat>EndLat):      #GO SOUTH
+                
+                if( StartLong<EndLong ):      #GO SOUTH EAST
+                    BackwardM1*(StartLat-EndLat)*KpLat*(EndLong-StartLong)*KpLong*FlatMotorValue
+                    BackwardM2*(StartLat-EndLat)*KpLat*FlatMotorValue
+                    print ("GO SOUTH EAST")
+                    
+                elif( StartLong>EndLong ):     #GO SOUTH WEST 
+                    BackwardM1*(StartLat-EndLat)*KpLat*FlatMotorValue
+                    BackwardM2*(StartLat-EndLat)*KpLat*(StartLong-EndLong)*KpLong*FlatMotorValue
+                    print ("GO SOUTH WEST")
+                    
+                elif( (0.98*EndLong)<=StartLong<=(1.02*EndLong) ):     #GO ONLY SOUTH
+                    BackwardM1*(StartLat-EndLat)*KpLat*FlatMotorValue
+                    BackwardM2*(StartLat-EndLat)*KpLat*FlatMotorValue
+                    print ("GO ONLY SOUTH")
         
 #--------------------------------------------------------------------------------------------------------------------#
         
-    elif (45<Align<135):  #THIS TELLS THE BUGGY THAT ITS FRONT IS FACING EAST (All comments in this loop takes facing east as being north)
+    elif (45<=Align<=135):  #THIS TELLS THE BUGGY THAT ITS FRONT IS FACING EAST (All comments in this loop takes facing east as being north)
         print ("FRONT OF TANK FACING EAST")
         print ("FRONT OF TANK FACING EAST")
         print ("FRONT OF TANK FACING EAST")
         
-        while ( (0.98*EndLat)<StartLat<(1.02*EndLat) and (0.98*EndLong)<StartLong<(1.02*EndLong) ): #Main argument is checking if starting co-ordinates come to within +-2% of destination co-ordinates
+        while ( (0.98*EndLat)<=StartLat<=(1.02*EndLat) and (0.98*EndLong)<=StartLong<=(1.02*EndLong) ): #Main argument is checking if starting co-ordinates come to within +-2% of destination co-ordinates
             
             if(StartLong<EndLong):        #GO NORTH
                 
@@ -126,7 +169,7 @@ def MapMotion(EndLat,EndLong):
                     ForwardM2*(EndLong-StartLong)*KpLat*FlatMotorValue
                     print ("GO NORTH EAST")
                     
-                elif( (0.98*EndLat)<StartLat<(1.02*EndLat) ):     #GO ONLY NORTH
+                elif( (0.98*EndLat)<=StartLat<=(1.02*EndLat) ):     #GO ONLY NORTH
                     ForwardM1*(EndLong-StartLong)*KpLat*FlatMotorValue
                     ForwardM2*(EndLong-StartLong)*KpLat*FlatMotorValue
                     print ("GO ONLY NORTH")
@@ -134,8 +177,8 @@ def MapMotion(EndLat,EndLong):
             elif(StartLong>EndLong):      #GO SOUTH
                 
                 if( StartLat<EndLat ):      #GO SOUTH WEST
-                    BackwardM1*(StartLong-EndLong)*KpLat*(EndLat-StartLat)*KpLong*FlatMotorValue
-                    BackwardM2*(StartLong-EndLong)*KpLat*FlatMotorValue
+                    BackwardM1*(StartLong-EndLong)*KpLat*FlatMotorValue
+                    BackwardM2*(StartLong-EndLong)*KpLat*(EndLat-StartLat)*KpLong*FlatMotorValue
                     print ("GO SOUTH WEST")
                     
                 elif( StartLat>EndLat):     #GO SOUTH EAST
@@ -143,20 +186,57 @@ def MapMotion(EndLat,EndLong):
                     BackwardM2*(StartLong-EndLong)*KpLat*FlatMotorValue
                     print ("GO SOUTH EAST")
                     
-                elif( (0.98*EndLat)<StartLat<(1.02*EndLat) ):     #GO ONLY SOUTH
+                elif( (0.98*EndLat)<=StartLat<=(1.02*EndLat) ):     #GO ONLY SOUTH
                     BackwardM1*(StartLong-EndLong)*KpLat*FlatMotorValue
                     BackwardM2*(StartLong-EndLong)*KpLat*FlatMotorValue
                     print ("GO ONLY SOUTH")
                     
+            
+                    
 #--------------------------------------------------------------------------------------------------------------------#
         
-    elif (225<Align<315):  #THIS TELLS THE BUGGY THAT ITS FRONT IS FACING WEST
+    elif (225<=Align<=315):  #THIS TELLS THE BUGGY THAT ITS FRONT IS FACING WEST
         print ("FRONT OF TANK FACING WEST")
         print ("FRONT OF TANK FACING WEST")
         print ("FRONT OF TANK FACING WEST")
+        
+        while ( (0.98*EndLat)<=StartLat<=(1.02*EndLat) and (0.98*EndLong)<=StartLong<=(1.02*EndLong) ): #Main argument is checking if starting co-ordinates come to within +-2% of destination co-ordinates
+            
+            if(StartLong>EndLong):        #GO NORTH
                 
+                if( StartLat<EndLat ):      #GO NORTH EAST
+                    ForwardM1*(EndLong-StartLong)*KpLat*(EndLat-StartLat)*KpLong*FlatMotorValue
+                    ForwardM2*(EndLong-StartLong)*KpLat*FlatMotorValue
+                    print ("GO NORTH WEST")
+                    
+                elif( StartLat>EndLat ):     #GO NORTH WEST
+                    ForwardM1*(EndLong-StartLong)*KpLat*FlatMotorValue
+                    ForwardM2*(EndLong-StartLong)*KpLat*(StartLat-EndLat)*KpLong*FlatMotorValue
+                    print ("GO NORTH EAST")
+                    
+                elif( (0.98*EndLat)<=StartLat<=(1.02*EndLat) ):     #GO ONLY NORTH
+                    ForwardM1*(EndLong-StartLong)*KpLat*FlatMotorValue
+                    ForwardM2*(EndLong-StartLong)*KpLat*FlatMotorValue
+                    print ("GO ONLY NORTH")
+                    
+            elif(StartLong<EndLong):      #GO SOUTH
                 
-                
+                if( StartLat<EndLat ):      #GO SOUTH EAST
+                    BackwardM1*(StartLong-EndLong)*KpLat*(EndLat-StartLat)*KpLong*FlatMotorValue
+                    BackwardM2*(StartLong-EndLong)*KpLat*FlatMotorValue
+                    print ("GO SOUTH WEST")
+                    
+                elif( StartLat>EndLat):     #GO SOUTH WEST
+                    BackwardM1*(StartLong-EndLong)*KpLat*FlatMotorValue
+                    BackwardM2*(StartLong-EndLong)*KpLat*(StartLat-EndLat)*KpLong*FlatMotorValue
+                    print ("GO SOUTH EAST")
+                    
+                elif( (0.98*EndLat)<=StartLat<=(1.02*EndLat) ):     #GO ONLY SOUTH
+                    BackwardM1*(StartLong-EndLong)*KpLat*FlatMotorValue
+                    BackwardM2*(StartLong-EndLong)*KpLat*FlatMotorValue
+                    print ("GO ONLY SOUTH")
+                    
+#-------------------------------------------------------------------------------------------------------------------#
                 
 def RectMapMotion(v1Lat, v1Long, v2Lat,v2Long, v3Lat,v3Long, v4Lat, v4Long):
 
@@ -228,23 +308,6 @@ def SpiralRectMapMotion():
         Currentv4Long = Currentv4Long - BuggyWidthLong
         
         #Loop back up again with this smaller rectangle
-    
-    
-    
-    
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-        
     
     
     
