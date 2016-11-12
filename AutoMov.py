@@ -50,8 +50,8 @@ def MapMotion(value1,value2):
     StartLat = 50       #This values will be obtained from GPS module and will be different each time this loop iterates
     StartLong = 60
     
-    value1 = EndLat
-    value2 = EndLong
+    EndLat = value1
+    EndLong = value2
     
     Align = CompassDegree()             #This gives the degree which implies which direction tank is facing at start
     
