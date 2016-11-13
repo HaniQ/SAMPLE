@@ -61,7 +61,7 @@ def MapMotion(value1,value2):
         print ("FRONT OF TANK FACING NORTH")
         print ("FRONT OF TANK FACING NORTH")
         
-        while ( (0.98*EndLat)<=StartLat<=(1.02*EndLat) and (0.98*EndLong)<=StartLong<=(1.02*EndLong) ): #Main argument is checking if starting co-ordinates come to within +-2% of destination co-ordinates
+        while ( (0.90*EndLat)<=StartLat<=(1.1*EndLat) and (0.90*EndLong)<=StartLong<=(1.1*EndLong) ): #Main argument is checking if starting co-ordinates come to within +-2% of destination co-ordinates
             
             if(StartLat<EndLat):        #GO NORTH
                 
@@ -75,7 +75,7 @@ def MapMotion(value1,value2):
                     ForwardM2*(EndLat-StartLat)*KpLat*(StartLong-EndLong)*KpLong*FlatMotorValue
                     print ("GO NORTH WEST")
                     
-                elif( (0.98*EndLong)<=StartLong<=(1.02*EndLong) ):     #GO ONLY NORTH
+                elif( (0.9*EndLong)<=StartLong<=(1.1*EndLong) ):     #GO ONLY NORTH
                     ForwardM1*(EndLat-StartLat)*KpLat*FlatMotorValue
                     ForwardM2*(EndLat-StartLat)*KpLat*FlatMotorValue
                     print ("GO ONLY NORTH")
@@ -92,18 +92,20 @@ def MapMotion(value1,value2):
                     BackwardM2*(StartLat-EndLat)*KpLat*(StartLong-EndLong)*KpLong*FlatMotorValue
                     print ("GO SOUTH WEST")
                     
-                elif( (0.98*EndLong)<=StartLong<=(1.02*EndLong) ):     #GO ONLY SOUTH
+                elif( (0.9*EndLong)<=StartLong<=(1.1*EndLong) ):     #GO ONLY SOUTH
                     BackwardM1*(StartLat-EndLat)*KpLat*FlatMotorValue
                     BackwardM2*(StartLat-EndLat)*KpLat*FlatMotorValue
                     print ("GO ONLY SOUTH")
                     
-            elif((0.98*EndLat)<=StartLat<=(1.02*EndLat)):   #Do not go south or north/ go only east/west
+            elif((0.9*EndLat)<=StartLat<=(1.1*EndLat)):   #Do not go south or north/ go only east/west
                 
                 if( StartLong<EndLong ):
                     MakeWideArcToGoEast
+                    print ("GO EAST ONLY")
                     
                 elif( StartLong>EndLong ):
                     MakeWideArcToGoWest
+                    print ("GO WEST ONLY")
                     
 #--------------------------------------------------------------------------------------------------------------------#
                     
@@ -112,40 +114,40 @@ def MapMotion(value1,value2):
         print ("FRONT OF TANK FACING SOUTH")
         print ("FRONT OF TANK FACING SOUTH")
         
-        while ( (0.98*EndLat)<=StartLat<=(1.02*EndLat) and (0.98*EndLong)<=StartLong<=(1.02*EndLong) ): #Main argument is checking if starting co-ordinates come to within +-2% of destination co-ordinates
+        while ( (0.9*EndLat)<=StartLat<=(1.1*EndLat) and (0.9*EndLong)<=StartLong<=(1.1*EndLong) ): #Main argument is checking if starting co-ordinates come to within +-2% of destination co-ordinates
             
-            if(StartLat<EndLat):        #GO NORTH
+            if(StartLat>EndLat):        #GO NORTH
                 
-                if( StartLong<EndLong ):      #GO NORTH EAST
-                    ForwardM1*(EndLat-StartLat)*KpLat*(EndLong-StartLong)*KpLong*FlatMotorValue
-                    ForwardM2*(EndLat-StartLat)*KpLat*FlatMotorValue
+                if( StartLong>EndLong ):      #GO NORTH EAST
+                    ForwardM1*(StartLat-EndLat)*KpLat*(StartLong-EndLong)*KpLong*FlatMotorValue
+                    ForwardM2*(StartLat-EndLat)*KpLat*FlatMotorValue
                     print ("GO NORTH EAST")
                     
-                elif( StartLong>EndLong ):     #GO NORTH WEST 
-                    ForwardM1*(EndLat-StartLat)*KpLat*FlatMotorValue
-                    ForwardM2*(EndLat-StartLat)*KpLat*(StartLong-EndLong)*KpLong*FlatMotorValue
+                elif( StartLong<EndLong ):     #GO NORTH WEST 
+                    ForwardM1*(StartLat-EndLat)*KpLat*FlatMotorValue
+                    ForwardM2*(StartLat-EndLat)*KpLat*(EndLong-StartLong)*KpLong*FlatMotorValue
                     print ("GO NORTH WEST")
                     
-                elif( (0.98*EndLong)<=StartLong<=(1.02*EndLong) ):     #GO ONLY NORTH
-                    ForwardM1*(EndLat-StartLat)*KpLat*FlatMotorValue
-                    ForwardM2*(EndLat-StartLat)*KpLat*FlatMotorValue
+                elif( (0.9*EndLong)<=StartLong<=(1.1*EndLong) ):     #GO ONLY NORTH
+                    ForwardM1*(StartLat-EndLat)*KpLat*FlatMotorValue
+                    ForwardM2*(StartLat-EndLat)*KpLat*FlatMotorValue
                     print ("GO ONLY NORTH")
                     
-            elif(StartLat>EndLat):      #GO SOUTH
+            elif(StartLat<EndLat):      #GO SOUTH
                 
-                if( StartLong<EndLong ):      #GO SOUTH EAST
-                    BackwardM1*(StartLat-EndLat)*KpLat*(EndLong-StartLong)*KpLong*FlatMotorValue
-                    BackwardM2*(StartLat-EndLat)*KpLat*FlatMotorValue
+                if( StartLong>EndLong ):      #GO SOUTH EAST
+                    BackwardM1*(EndLat-StartLat)*KpLat*(StartLong-EndLong)*KpLong*FlatMotorValue
+                    BackwardM2*(EndLat-StartLat)*KpLat*FlatMotorValue
                     print ("GO SOUTH EAST")
                     
-                elif( StartLong>EndLong ):     #GO SOUTH WEST 
-                    BackwardM1*(StartLat-EndLat)*KpLat*FlatMotorValue
-                    BackwardM2*(StartLat-EndLat)*KpLat*(StartLong-EndLong)*KpLong*FlatMotorValue
+                elif( StartLong<EndLong ):     #GO SOUTH WEST 
+                    BackwardM1*(EndLat-StartLat)*KpLat*FlatMotorValue
+                    BackwardM2*(EndLat-StartLat)*KpLat*(EndLong-StartLong)*KpLong*FlatMotorValue
                     print ("GO SOUTH WEST")
                     
-                elif( (0.98*EndLong)<=StartLong<=(1.02*EndLong) ):     #GO ONLY SOUTH
-                    BackwardM1*(StartLat-EndLat)*KpLat*FlatMotorValue
-                    BackwardM2*(StartLat-EndLat)*KpLat*FlatMotorValue
+                elif( (0.9*EndLong)<=StartLong<=(1.1*EndLong) ):     #GO ONLY SOUTH
+                    BackwardM1*(EndLat-StartLat)*KpLat*FlatMotorValue
+                    BackwardM2*(EndLat-StartLat)*KpLat*FlatMotorValue
                     print ("GO ONLY SOUTH")
         
 #--------------------------------------------------------------------------------------------------------------------#
@@ -155,7 +157,7 @@ def MapMotion(value1,value2):
         print ("FRONT OF TANK FACING EAST")
         print ("FRONT OF TANK FACING EAST")
         
-        while ( (0.98*EndLat)<=StartLat<=(1.02*EndLat) and (0.98*EndLong)<=StartLong<=(1.02*EndLong) ): #Main argument is checking if starting co-ordinates come to within +-2% of destination co-ordinates
+        while ( (0.9*EndLat)<=StartLat<=(1.1*EndLat) and (0.9*EndLong)<=StartLong<=(1.1*EndLong) ): #Main argument is checking if starting co-ordinates come to within +-2% of destination co-ordinates
             
             if(StartLong<EndLong):        #GO NORTH
                 
@@ -169,7 +171,7 @@ def MapMotion(value1,value2):
                     ForwardM2*(EndLong-StartLong)*KpLat*FlatMotorValue
                     print ("GO NORTH EAST")
                     
-                elif( (0.98*EndLat)<=StartLat<=(1.02*EndLat) ):     #GO ONLY NORTH
+                elif( (0.9*EndLat)<=StartLat<=(1.1*EndLat) ):     #GO ONLY NORTH
                     ForwardM1*(EndLong-StartLong)*KpLat*FlatMotorValue
                     ForwardM2*(EndLong-StartLong)*KpLat*FlatMotorValue
                     print ("GO ONLY NORTH")
@@ -186,7 +188,7 @@ def MapMotion(value1,value2):
                     BackwardM2*(StartLong-EndLong)*KpLat*FlatMotorValue
                     print ("GO SOUTH EAST")
                     
-                elif( (0.98*EndLat)<=StartLat<=(1.02*EndLat) ):     #GO ONLY SOUTH
+                elif( (0.9*EndLat)<=StartLat<=(1.1*EndLat) ):     #GO ONLY SOUTH
                     BackwardM1*(StartLong-EndLong)*KpLat*FlatMotorValue
                     BackwardM2*(StartLong-EndLong)*KpLat*FlatMotorValue
                     print ("GO ONLY SOUTH")
@@ -200,7 +202,7 @@ def MapMotion(value1,value2):
         print ("FRONT OF TANK FACING WEST")
         print ("FRONT OF TANK FACING WEST")
         
-        while ( (0.98*EndLat)<=StartLat<=(1.02*EndLat) and (0.98*EndLong)<=StartLong<=(1.02*EndLong) ): #Main argument is checking if starting co-ordinates come to within +-2% of destination co-ordinates
+        while ( (0.9*EndLat)<=StartLat<=(1.1*EndLat) and (0.9*EndLong)<=StartLong<=(1.1*EndLong) ): #Main argument is checking if starting co-ordinates come to within +-2% of destination co-ordinates
             
             if(StartLong>EndLong):        #GO NORTH
                 
@@ -214,7 +216,7 @@ def MapMotion(value1,value2):
                     ForwardM2*(EndLong-StartLong)*KpLat*(StartLat-EndLat)*KpLong*FlatMotorValue
                     print ("GO NORTH EAST")
                     
-                elif( (0.98*EndLat)<=StartLat<=(1.02*EndLat) ):     #GO ONLY NORTH
+                elif( (0.9*EndLat)<=StartLat<=(1.1*EndLat) ):     #GO ONLY NORTH
                     ForwardM1*(EndLong-StartLong)*KpLat*FlatMotorValue
                     ForwardM2*(EndLong-StartLong)*KpLat*FlatMotorValue
                     print ("GO ONLY NORTH")
@@ -231,7 +233,7 @@ def MapMotion(value1,value2):
                     BackwardM2*(StartLong-EndLong)*KpLat*(StartLat-EndLat)*KpLong*FlatMotorValue
                     print ("GO SOUTH EAST")
                     
-                elif( (0.98*EndLat)<=StartLat<=(1.02*EndLat) ):     #GO ONLY SOUTH
+                elif( (0.9*EndLat)<=StartLat<=(1.1*EndLat) ):     #GO ONLY SOUTH
                     BackwardM1*(StartLong-EndLong)*KpLat*FlatMotorValue
                     BackwardM2*(StartLong-EndLong)*KpLat*FlatMotorValue
                     print ("GO ONLY SOUTH")
