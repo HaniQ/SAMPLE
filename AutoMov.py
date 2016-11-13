@@ -45,6 +45,7 @@ def AlignWest():       #This function will
     
 
 #East and West mean right and left and north and south mean forward and backward on specific frames
+#This means the print statemnts take north to be forward and any subsequent east, west print statements mean left or right in that frame
 def MapMotion(value1,value2):
     
     StartLat = 50       #This values will be obtained from GPS module and will be different each time this loop iterates
@@ -149,6 +150,16 @@ def MapMotion(value1,value2):
                     BackwardM1*(EndLat-StartLat)*KpLat*FlatMotorValue
                     BackwardM2*(EndLat-StartLat)*KpLat*FlatMotorValue
                     print ("GO ONLY SOUTH")
+                    
+            elif((0.9*EndLat)<=StartLat<=(1.1*EndLat)):   #Do not go south or north/ go only east/west
+                
+                if( StartLong<EndLong ):
+                    MakeWideArcToGoWest
+                    print ("GO WEST ONLY")
+                    
+                elif( StartLong>EndLong ):
+                    MakeWideArcToGoEast
+                    print ("GO EAST ONLY")
         
 #--------------------------------------------------------------------------------------------------------------------#
         
@@ -193,7 +204,15 @@ def MapMotion(value1,value2):
                     BackwardM2*(StartLong-EndLong)*KpLat*FlatMotorValue
                     print ("GO ONLY SOUTH")
                     
-            
+            elif( (0.9*EndLong)<=StartLong<=(1.1*EndLong) ):   #Do not go south or north/ go only east/west
+                
+                if( StartLat<EndLat ):
+                    MakeWideArcToGoWest
+                    print ("GO WEST ONLY")
+                    
+                elif( StartLat>EndLat ):
+                    MakeWideArcToGoEast
+                    print ("GO EAST ONLY")
                     
 #--------------------------------------------------------------------------------------------------------------------#
         
@@ -237,6 +256,16 @@ def MapMotion(value1,value2):
                     BackwardM1*(StartLong-EndLong)*KpLat*FlatMotorValue
                     BackwardM2*(StartLong-EndLong)*KpLat*FlatMotorValue
                     print ("GO ONLY SOUTH")
+                    
+            elif( (0.9*EndLong)<=StartLong<=(1.1*EndLong) ):   #Do not go south or north/ go only east/west
+                
+                if( StartLat<EndLat ):
+                    MakeWideArcToGoEast
+                    print ("GO EaST ONLY")
+                    
+                elif( StartLat>EndLat ):
+                    MakeWideArcToGoWest
+                    print ("GO WEST ONLY")
                     
 #-------------------------------------------------------------------------------------------------------------------#
                 
