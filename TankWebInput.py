@@ -56,14 +56,33 @@ def ManualF():
     
     print(Actual_M1)
     print(Actual_M2)
-    
-    #try:
-        #roboclaw.ForwardM1(address, int(Round(Actual_M1)))         #Slotting in the two motor integer values into roboclaw forward function
-        #roboclaw.ForwardM2(address, int(Round(Actual_M2)))
-    #except:
-        #print("problem with roboclaw")
-        #AttemptToConnectToRoboClaw()
-      
+'''    
+    if (Actual_M1>0):
+        try:
+            roboclaw.ForwardM1(address, int(Round(Actual_M1)))         #Slotting in the two motor integer values into roboclaw forward functio
+        except:
+            print("problem with roboclaw")
+            AttemptToConnectToRoboClaw()
+    elif (Actual_M1<0):
+        try:
+            roboclaw.BackwardM1(address, int(abs(Round(Actual_M1))))
+        except:
+            print("problem with roboclaw")
+            AttemptToConnectToRoboClaw()
+
+    if(Actual_M2>0):
+        try:
+            roboclaw.ForwardM2(address, int(Round(Actual_M2)))
+        except:
+            print("problem with roboclaw")
+            AttemptToConnectToRoboClaw()
+    elif (Actual_M2<0):
+        try:
+            roboclaw.BackwardM2(address, int(abs(Round(Actual_M2))))
+        except:
+            print("problem with roboclaw")
+            AttemptToConnectToRoboClaw()
+'''            
 #This webpage will be returned when the user presses submit button, the location.href function redirects the page back to rclaw_main.html so this is a placeholder page    
     return '''
 <!DOCTYPE html>
