@@ -1,10 +1,4 @@
-#Author: Ekram
-#Made 30/10/2016
-#Roboclaw stuff was copy pasted from Sam's code
-#Using python web flask framework, html and javascript and a little jquery
-#THIS DOES NOT HAVE PROXIMITY SENSING YET SO PROCEED WITH CAUTION
-#WORK LEFT: Adding sqlite to fetch proximity readings from the Monitor_values table in t7.db and use that as argument to limit motion of the tank
-#VERY IMPORTANT: BEFORE RUNNING THIS MAKE SURE ALL THE ROOT WEBPAGE ADDRESS IN THIS CODE MATCHES WITH THE pi's IP ADDRESS
+#Author Ekram
 
 #Importing all the relevant stuff
 import time
@@ -411,26 +405,45 @@ def MapMotion(value1, value2, value3, value4):          #value1 and 2 is startin
     Align = 2       #THIS IS FOR TESTING REMOVE IN THE FUTURE
 
     if( (0<=Align<=45) or (315<=Align<=359) ):  #THIS TELLS THE BUGGY THAT ITS FRONT IS FACING NORTH
+        print ('')
         print ("FRONT OF TANK FACING NORTH")
         print ("FRONT OF TANK FACING NORTH")
         print ("FRONT OF TANK FACING NORTH")
+        print ('')
         
         while ( ( ( StartLat<LowerEndLat) or (StartLat>UpperEndLat ) ) and ( (StartLong<LowerEndLong) or (StartLong>UpperEndLong) ) ): #Main argument is checking if starting co-ordinates come to within +-2% of destination co-ordinates
             
             PrintClat = GetCurrentLatitude()
             PrintClong = GetCurrentLongitude()
             print ('Current Latitude: ' + str(PrintClat) + ' Current Longitude: ' + str(PrintClong))
+            print ('Destination Latitude: ' + str(EndLat) + ' Destination Longitude: ' + str(EndLong))
             
-            StartLat = Decimal(PrintClat)                    #Fetching current co-ordinates from sqlite database
-            StartLong = Decimal(PrintClong)
+            try:
+                StartLat = Decimal(PrintClat)                    #Fetching current co-ordinates from sqlite database
+            except:
+                print ("CAUTION GPS MALFUNCTION!!!!!")
+                StartLat = 0
+                
+            try:
+                StartLong = Decimal(PrintClong)
+            except:
+                print ("CAUTION GPS MALFUNCTION!!!!!")
+                StartLong = 0
             
             MinLat = min(StartLat,EndLat)                                               #Calculating lat gain
             MaxLat = max(StartLat,EndLat)
-            PercentLatGain = abs( ((MaxLat-MinLat)/StartLat)*Decimal(127*10))
-            
+            try:
+                PercentLatGain = abs( ((MaxLat-MinLat)/StartLat)*Decimal(127*10))
+            except ZeroDivisionError:
+                PercentLatGain = 0
+                
             MinLong = min(StartLong, EndLong)                                           #Calculating Long gain
             MaxLong = max(StartLong, EndLong)
-            PercentLongGain = abs( ((MaxLong-MinLong)/StartLong)*Decimal(127*100))
+            try:
+                PercentLongGain = abs( ((MaxLong-MinLong)/StartLong)*Decimal(127*100))
+            except ZeroDivisionError:
+                PercentLongGain = 0
+                
             
             if(StartLat<EndLat):        #GO NORTH
                 
@@ -443,7 +456,11 @@ def MapMotion(value1, value2, value3, value4):          #value1 and 2 is startin
                     M2val = Decimal(FlatMotorOffset) + Decimal(LatGain)
                     #ForwardM1*(EndLat-StartLat)*KpLat*(EndLong-StartLong)*KpLong*FlatMotorValue
                     #ForwardM2*(EndLat-StartLat)*KpLat*FlatMotorValue
-                    print ("GO NORTH EAST with M1:" + str(M1val) + " with M2: " + str(M2val) )
+                    
+                    if (LatGain==0 or LongGain==0):
+                        print ("MOTORS STOPPED") 
+                    else:
+                        print ("GO NORTH EAST with M1:" + str(M1val) + " with M2: " + str(M2val) )
                     
                 elif( StartLong>EndLong ):     #GO NORTH WEST 
                     #ForwardM1*(EndLat-StartLat)*KpLat*FlatMotorValue
@@ -481,8 +498,9 @@ def MapMotion(value1, value2, value3, value4):          #value1 and 2 is startin
                 elif( StartLong>EndLong ):
                     #MakeWideArcToGoWest
                     print ("GO WEST ONLY")
-                    
-            time.sleep(2)
+            
+            print ('')        
+            time.sleep(4)
                     
 #--------------------------------------------------------------------------------------------------------------------#
                     
@@ -673,10 +691,14 @@ def GetCurrentLatitude():
     
     RawLat = GPSstring[65:95]
     Testring2 = str(RawLat)
-    LatCommaIndex = Testring2.index(',')
-    LatColonIndex = Testring2.index(':')
-    FinalStartLat = RawLat[(LatColonIndex+2):LatCommaIndex]
-    return (FinalStartLat)
+    try:
+        LatCommaIndex = Testring2.index(',')
+        LatColonIndex = Testring2.index(':')
+        FinalStartLat = RawLat[(LatColonIndex+2):LatCommaIndex]
+        return (FinalStartLat)
+    except ValueError:
+        print ('SOMETHING IS WRONG WITH YOUR GPS!!!!!!!!!!!!!!CAUTION!!!!!!!!!!!!!!')
+        return (0)
 
 #THIS FUNCTIoN WHEN CALLED WILL RETURN CURRENT TANK GPS LONGITUDE
 def GetCurrentLongitude():
@@ -691,10 +713,14 @@ def GetCurrentLongitude():
     
     RawLong = GPSstring[9:32]
     Testring = str(RawLong)
-    LongCommaIndex = Testring.index(',')
-    LongMinusIndex = Testring.index('-')
-    FinalStartLong = RawLong[LongMinusIndex:LongCommaIndex]
-    return (FinalStartLong)
+    try:
+        LongCommaIndex = Testring.index(',')
+        LongMinusIndex = Testring.index('-')
+        FinalStartLong = RawLong[LongMinusIndex:LongCommaIndex]
+        return (FinalStartLong)
+    except ValueError:
+        print ('SOMETHING IS WRONG WITH YOUR GPS!!!!!!!!!!!!!!!!!CAUTION!!!!!!!!!!!!!!!')
+        return (0)
 
 
 # Run the app :)
