@@ -1,4 +1,13 @@
-#Author Ekram
+'''
+Author: Ekram
+Made 30/10/2016
+Roboclaw stuff was copy pasted from Sam's code
+Using python web flask framework, html and javascript and a little jquery
+THIS DOES NOT HAVE PROXIMITY SENSING YET SO PROCEED WITH CAUTION
+WORK LEFT: Adding sqlite to fetch proximity readings from the Monitor_values table in t8.db and use that as argument to limit motion of the tank
+VERY IMPORTANT: BEFORE RUNNING THIS MAKE SURE ALL THE ROOT WEBPAGE ADDRESS IN THIS CODE MATCHES WITH THE pi's IP ADDRESS
+DO NOT tamper with the voice recognition stuff or go to the web page while code is running. It does not have any catch/motor limiters so might make buggy go haywire with stray voice commands
+'''
 
 #Importing all the relevant stuff
 import time
