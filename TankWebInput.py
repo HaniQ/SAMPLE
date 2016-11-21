@@ -65,7 +65,7 @@ def ManualF():
     
     print(Actual_M1)
     print(Actual_M2)
-'''    
+ 
     if (Actual_M1>0):
         try:
             roboclaw.ForwardM1(address, int(Round(Actual_M1)))         #Slotting in the two motor integer values into roboclaw forward functio
@@ -78,7 +78,6 @@ def ManualF():
         except:
             print("problem with roboclaw")
             AttemptToConnectToRoboClaw()
-
     if(Actual_M2>0):
         try:
             roboclaw.ForwardM2(address, int(Round(Actual_M2)))
@@ -91,7 +90,7 @@ def ManualF():
         except:
             print("problem with roboclaw")
             AttemptToConnectToRoboClaw()
-'''            
+          
 #This webpage will be returned when the user presses submit button, the location.href function redirects the page back to rclaw_main.html so this is a placeholder page    
     return '''
 <!DOCTYPE html>
@@ -193,6 +192,11 @@ def RootMap():
 def PRINTps():
     Var1=request.form['LAT']
     Var2=request.form['LONG']
+    Var3 = request.form['KpLat']
+    Var4 = request.form['KpLong']
+    
+    KpLatpy = float(Var3)
+    KpLongpy = float(Var4)
     
     print ("Destination latitude is : " + Var1)
     print ("Destination longitude is : " + Var2)
@@ -231,7 +235,7 @@ def PRINTps():
     LATpy = Decimal(Var1)
     LONGpy = Decimal(Var2)
     
-    MapMotion(FinalStartLat, FinalStartLong, LATpy, LONGpy)             #CALLING THE FUNCTION TO TRANSLATE THESE COORDINATES INTO MOTION
+    MapMotion(FinalStartLat, FinalStartLong, LATpy, LONGpy, KpLatpy, KpLongpy )             #CALLING THE FUNCTION TO TRANSLATE THESE COORDINATES INTO MOTION
     
     return render_template('maptest.html', LATpy=LATpy, LONGpy=LONGpy, FinalStartLong=FinalStartLong, FinalStartLat=FinalStartLat)
 
@@ -412,14 +416,39 @@ def Decipher():
 #COORDINATE TO BUGGY MOTION FUNCTION
 #East and West mean right and left and north and south mean forward and backward on specific frames
 #This means the print statemnts take north to be forward and any subsequent east, west print statements mean left or right in that frame
-def MapMotion(value1, value2, value3, value4):          #value1 and 2 is starting lat/long while value3/4 is ending lat/long
+def MapMotion(value1, value2, value3, value4, value5, value6):          #value1 and 2 is starting lat/long while value3/4 is ending lat/long while value5 is KpLat and value6 is KpLong
     
-    StartLat = Decimal(value1)     #This values will be obtained from GPS module and will be different each time this loop iterates
-    StartLong = Decimal(value2)
+    try:
+        StartLat = Decimal(value1)     #This value will be obtained from GPS module and will be different each time this loop iterates
+    except:
+        StartLat = 0
+        
+    try:
+        StartLong = Decimal(value2)
+    except:
+        StartLong = 0
 
-    
     EndLat = Decimal(value3)
     EndLong = Decimal(value4)
+    
+    KpLat = value5
+    KpLong = value6
+    
+    #--------------------SECTION TO LIMIT WEB PAHE KPLAT AND KPLONG TO between 0 and 2---------------------#
+    if (KpLat>2):
+        KpLat = 2
+    elif (KpLat<0):
+        KpLat = 1
+    else:
+        KpLat = value5
+        
+    if (KpLong>2):
+        KpLong = 2
+    elif (KpLong<0):
+        KpLong = 1
+    else:
+        KpLong = value6
+    #-----------------------------------------------------------------------------------------#
     
     LowerEndLat = Decimal(1)*EndLat
     UpperEndLat = Decimal(1)*EndLat
@@ -472,50 +501,80 @@ def MapMotion(value1, value2, value3, value4):          #value1 and 2 is startin
             except ZeroDivisionError:
                 PercentLongGain = 0
                 
-            
+            LatGain = PercentLatGain*Decimal(FlatMotorOffset)
+            LongGain = PercentLongGain*Decimal(FlatMotorOffset)
+                
+            #MAIN MOTOR MOVEMENT FUNCTIONS 
             if(StartLat<EndLat):        #GO NORTH
                 
                 if( StartLong<EndLong ):      #GO NORTH EAST
                     
-                    LatGain = PercentLatGain*Decimal(FlatMotorOffset)
-                    LongGain = PercentLongGain*Decimal(FlatMotorOffset)
-                    
-                    M1val = Decimal(FlatMotorOffset) + Decimal(LatGain)+ Decimal(LongGain)
-                    M2val = Decimal(FlatMotorOffset) + Decimal(LatGain)
+                    M1val = Decimal(FlatMotorOffset) + Decimal(LatGain)*Decimal(KpLat) + Decimal(LongGain)*Decimal(KpLong)
+                    M2val = Decimal(FlatMotorOffset) + Decimal(LatGain)*Decimal(KpLat)
                     #ForwardM1*(EndLat-StartLat)*KpLat*(EndLong-StartLong)*KpLong*FlatMotorValue
                     #ForwardM2*(EndLat-StartLat)*KpLat*FlatMotorValue
                     
                     if (LatGain==0 or LongGain==0):
                         print ("MOTORS STOPPED") 
                     else:
-                        print ("GO NORTH EAST with M1:" + str(M1val) + " with M2: " + str(M2val) )
+                        print ("GO NORTH EAST with M1:" + str(round(M1val)) + " with M2: " + str(round(M2val)) )
                     
-                elif( StartLong>EndLong ):     #GO NORTH WEST 
+                elif( StartLong>EndLong ):     #GO NORTH WEST
+                    
+                    M1val = Decimal(FlatMotorOffset) + Decimal(LatGain)*Decimal(KpLat)
+                    M2val = Decimal(FlatMotorOffset) + Decimal(LatGain)*Decimal(KpLat) + Decimal(LongGain)*Decimal(KpLong)
                     #ForwardM1*(EndLat-StartLat)*KpLat*FlatMotorValue
                     #ForwardM2*(EndLat-StartLat)*KpLat*(StartLong-EndLong)*KpLong*FlatMotorValue
-                    print ("GO NORTH WEST")
+                    if (LatGain==0 or LongGain==0):
+                        print ("MOTORS STOPPED") 
+                    else:
+                        print ("GO NORTH WEST with M1:" + str(round(M1val)) + " with M2: " + str(round(M2val)) )
                     
-                elif( (Decimal(0.9)*EndLong)<=StartLong<=(Decimal(1.1)*EndLong) ):     #GO ONLY NORTH
+                elif( (StartLong>LowerEndLong) and (StartLong<UpperEndLong) ):     #GO ONLY NORTH
+                    
+                    M1val = Decimal(FlatMotorOffset) + Decimal(LatGain)*Decimal(KpLat)
+                    M2val = Decimal(FlatMotorOffset) + Decimal(LatGain)*Decimal(KpLat)
                     #ForwardM1*(EndLat-StartLat)*KpLat*FlatMotorValue
                     #ForwardM2*(EndLat-StartLat)*KpLat*FlatMotorValue
-                    print ("GO ONLY NORTH")
+                    if (LatGain==0 or LongGain==0):
+                        print ("MOTORS STOPPED") 
+                    else:
+                        print ("GO only NORTH with M1:" + str(round(M1val)) + " with M2: " + str(round(M2val)) )
                     
             elif(StartLat>EndLat):      #GO SOUTH
                 
                 if( StartLong<EndLong ):      #GO SOUTH EAST
+                    
+                    M1val = Decimal(FlatMotorOffset) + Decimal(LatGain)*Decimal(KpLat) + Decimal(LongGain)*Decimal(KpLong)
+                    M2val = Decimal(FlatMotorOffset) + Decimal(LatGain)*Decimal(KpLat)
                     #BackwardM1*(StartLat-EndLat)*KpLat*(EndLong-StartLong)*KpLong*FlatMotorValue
                     #BackwardM2*(StartLat-EndLat)*KpLat*FlatMotorValue
-                    print ("GO SOUTH EAST")
+                    if (LatGain==0 or LongGain==0):
+                        print ("MOTORS STOPPED") 
+                    else:
+                        print ("GO South EAST with backward M1:" + str(round(M1val)) + " with backward M2: " + str(round(M2val)) )
                     
-                elif( StartLong>EndLong ):     #GO SOUTH WEST 
+                elif( StartLong>EndLong ):     #GO SOUTH WEST
+                    
+                    M1val = Decimal(FlatMotorOffset) + Decimal(LatGain)*Decimal(KpLat)
+                    M2val = Decimal(FlatMotorOffset) + Decimal(LatGain)*Decimal(KpLat) + Decimal(LongGain)*Decimal(KpLong)
                     #BackwardM1*(StartLat-EndLat)*KpLat*FlatMotorValue
                     #BackwardM2*(StartLat-EndLat)*KpLat*(StartLong-EndLong)*KpLong*FlatMotorValue
-                    print ("GO SOUTH WEST")
+                    if (LatGain==0 or LongGain==0):
+                        print ("MOTORS STOPPED") 
+                    else:
+                        print ("GO South WEST with backward M1:" + str(round(M1val)) + " with backward M2: " + str(round(M2val)) )
                     
-                elif( (0.9*EndLong)<=StartLong<=(1.1*EndLong) ):     #GO ONLY SOUTH
+                elif( (StartLong>LowerEndLong) and (StartLong<UpperEndLong) ):     #GO ONLY SOUTH
+                    
+                    M1val = Decimal(FlatMotorOffset) + Decimal(LatGain)*Decimal(KpLat)
+                    M2val = Decimal(FlatMotorOffset) + Decimal(LatGain)*Decimal(KpLat)
                     #BackwardM1*(StartLat-EndLat)*KpLat*FlatMotorValue
                     #BackwardM2*(StartLat-EndLat)*KpLat*FlatMotorValue
-                    print ("GO ONLY SOUTH")
+                    if (LatGain==0 or LongGain==0):
+                        print ("MOTORS STOPPED") 
+                    else:
+                        print ("GO only South with backward M1:" + str(round(M1val)) + " with backward M2: " + str(round(M2val)) )
                     
             elif(  StartLat==EndLat ):   #Do not go south or north/ go only east/west
                 
@@ -757,5 +816,4 @@ if __name__ == "__main__":
     #AttemptToConnectToRoboClaw()
 
     app.run(host='0.0.0.0', debug=True)
-    
     
