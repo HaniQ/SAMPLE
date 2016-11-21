@@ -13,7 +13,7 @@
       }
       /* Optional: Makes the sample page fill the window. */
       html, body {
-        height: 100%;
+        height: 90%;
         margin: 0;
         padding: 0;
       }
@@ -35,8 +35,9 @@
         JSlat = {{LATpy}};
         JSlong = {{LONGpy}};
         
-        Start_Lat = 53.47541458927207;
-        Start_Long = -2.2344839572906494;
+        
+        Start_Lat = {{FinalStartLat}} ;    //53.47541458927207;
+        Start_Long = {{FinalStartLong}};   //-2.2344839572906494; 
         
         var sackville = { lat: Start_Lat, lng: Start_Long };             //This could be current GPS co ordinate of tank8. A dynamic value from the server backend would update tis value with tank co-ordinate
         var Destination = { lat: JSlat, lng: JSlong };
@@ -135,13 +136,21 @@
         //STRING SLICING END
         
          document.getElementById('1HEAD').innerHTML = x;
+       
       
+      //THIS SECTION AUTOMATICALLY FILLS IN THE $ TEXT BOX AT BOTTOM WHEN SOMEONE CLICKS MAP
           var TheTextBox1 = document.getElementById("idTEXT1");
           TheTextBox1.value = FinalSlicedLat;
           
           var TheTextBox2 = document.getElementById("idTEXT2");
           TheTextBox2.value = FinalSlicedLong;
 
+          var TheTextBox3 = document.getElementById("idTEXT3");
+          TheTextBox3.value = '1';
+          
+          var TheTextBox4 = document.getElementById("idTEXT4");
+          TheTextBox4.value = '1';
+          
         
         //jQuery(function(){
           //jQuery('#idSubmit').click();      
@@ -206,6 +215,9 @@
       <div class="speech">
       <input type="text" name="LAT" id="idTEXT1" placeholder="Enter Latitude" />
       <input type="text" name="LONG" id="idTEXT2" placeholder="Enter Longitude" />
+      <input type="numeric" name="KpLat" id="idTEXT3" placeholder="Enter Proportional Lat" />
+      <input type="numeric" name="KpLong" id="idTEXT4" placeholder="Enter Proportional Long" />
+      
        <input type="submit" id="idSubmit" />
       </div>
       </form>
@@ -219,8 +231,6 @@
     <h1 id="DestLat">Waiting for input</h1>
      <h1 id="DestLong">Waiting for input</h1>
     
-    
-    <!--onclick="window.open('http://192.168.137.214:5000/PRINTps')"--> 
       
   </body>
 </html>
