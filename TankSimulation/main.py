@@ -2,7 +2,7 @@
 Author: Ekram
 08.02.17
 Simulation for navigation of the buggy
-TODO: Current field scanned % is not correct. Think of new one
+
 '''
 
 import pygame
@@ -13,6 +13,9 @@ from Tank import *
 
 
 def main():
+
+    Green = (34,139,34)
+    White = (255,255,255)
 
 #Initialize Everything
     screen_width = 1500
@@ -36,14 +39,38 @@ def main():
     Field_y1 = 120
     Field_y2 = 720
     Buggy_Dimensions = 50
-    wall_sprite_group = pygame.sprite.Group()
+    field_sprite_group = pygame.sprite.LayeredUpdates()
     z = Field_x2-Field_x1
     w = Field_y2-Field_y1
-    my_wall1 = Collision_Line(Field_x1,Field_y1,z,w)
-    wall_sprite_group.add(my_wall1)
+    Field = Collision_Line(Field_x1,Field_y1,z,w, Green)
+    field_sprite_group.add(Field)
 
     Number_of_grids = round(((Field_x2-Field_x1)*(Field_y2-Field_y1))/(Buggy_Dimensions*Buggy_Dimensions))
     percentage_per_grid = round((1/Number_of_grids)*100,4)
+
+#Field Boundary lines
+    wall_sprite_group_horz_bottom = pygame.sprite.LayeredUpdates()
+    wall_sprite_group_horz_top = pygame.sprite.LayeredUpdates()
+    wall_sprite_group_vert_right = pygame.sprite.LayeredUpdates()
+    wall_sprite_group_vert_left = pygame.sprite.LayeredUpdates()
+
+    Bound_Line1 = Collision_Line(Field_x1,Field_y1,z,3, White)
+    Inner_Bound_Line1 = Collision_Line(900,320,500,3, White)
+    wall_sprite_group_horz_top.add(Bound_Line1)
+    
+
+    Bound_Line2 = Collision_Line(Field_x1,Field_y2,z,3, White)
+    Inner_Bound_Line2 = Collision_Line(900,310,500,3, White)
+    Inner_Bound_Line3 = Collision_Line(400,517,700,3, White)
+    wall_sprite_group_horz_bottom.add(Bound_Line2)
+    
+
+    Bound_Line3 = Collision_Line(Field_x1,Field_y1,3,w, White)
+    Inner_Bound_Line4 = Collision_Line(1100,517,3,400, White)
+    wall_sprite_group_vert_left.add(Bound_Line3)
+
+    Bound_Line4 = Collision_Line(Field_x2,Field_y1,3,w, White)
+    wall_sprite_group_vert_right.add(Bound_Line4)
 
 
 #text
@@ -65,8 +92,7 @@ def main():
 
 
 #Adding to super group which will handle drawing
-
-    allsprites = pygame.sprite.LayeredUpdates((bg, wall_sprite_group, tank))
+    allsprites = pygame.sprite.LayeredUpdates((bg, field_sprite_group, wall_sprite_group_horz_bottom, wall_sprite_group_horz_top, wall_sprite_group_vert_left, wall_sprite_group_vert_right, tank))
 
     
 #Main Loop
@@ -128,12 +154,59 @@ def main():
                 tank.Current_Y_position = Field_y1
                 tank.Update_Animation('Navigate_Right')
 
+            elif event.type == KEYDOWN and event.key == K_m:
+                tank.Current_X_position = Field_x1+50
+                tank.Current_Y_position = Field_y1+50
+                tank.Update_Animation('Machine_Learning_Start')
+
             elif event.type == KEYDOWN and event.key == K_w:
                 tank.Print_Ending_Array()
 
-        allsprites.update()
- 
+            elif event.type == KEYDOWN and event.key == K_z:
+                tank.Update_Animation('Diagonal')
 
+            elif event.type == KEYDOWN and event.key == K_a:
+                wall_sprite_group_horz_top.add(Inner_Bound_Line1)
+                wall_sprite_group_horz_bottom.add(Inner_Bound_Line2)
+                wall_sprite_group_horz_bottom.add(Inner_Bound_Line3)
+                wall_sprite_group_vert_left.add(Inner_Bound_Line4)
+
+                allsprites.remove(wall_sprite_group_horz_bottom)
+                allsprites.remove(wall_sprite_group_horz_top)
+
+                allsprites.remove(wall_sprite_group_vert_left)
+
+                allsprites.add(wall_sprite_group_horz_bottom)
+                allsprites.add(wall_sprite_group_horz_top)
+
+                allsprites.add(wall_sprite_group_vert_left)
+
+            elif event.type == KEYDOWN and event.key == K_s:
+                allsprites.remove(Inner_Bound_Line1)
+                allsprites.remove(Inner_Bound_Line2)
+                allsprites.remove(Inner_Bound_Line3)
+                allsprites.remove(Inner_Bound_Line4)
+
+                wall_sprite_group_horz_top.remove(Inner_Bound_Line1)
+                wall_sprite_group_horz_bottom.remove(Inner_Bound_Line2)
+                wall_sprite_group_horz_bottom.remove(Inner_Bound_Line3)
+                wall_sprite_group_vert_left.remove(Inner_Bound_Line4)
+
+                allsprites.remove(wall_sprite_group_horz_bottom)
+                allsprites.remove(wall_sprite_group_horz_top)
+                allsprites.remove(wall_sprite_group_vert_left)
+
+                allsprites.add(wall_sprite_group_horz_bottom)
+                allsprites.add(wall_sprite_group_horz_top)
+                allsprites.add(wall_sprite_group_vert_left)
+
+
+        allsprites.remove(tank)
+        tank.update(wall_sprite_group_horz_bottom, wall_sprite_group_horz_top, wall_sprite_group_vert_left, wall_sprite_group_vert_right)
+        allsprites.update()
+        allsprites.add(tank)
+        allsprites.move_to_back(bg)
+ 
         #Draw Everything
 
         allsprites.draw(screen)       
