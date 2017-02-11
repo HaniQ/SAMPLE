@@ -5,7 +5,7 @@ will contain the logic and update statements of the tank/car sprite
 
 import pygame
 from utilities import *
-
+import random
 
 
 class Tank(pygame.sprite.Sprite):
@@ -47,8 +47,21 @@ class Tank(pygame.sprite.Sprite):
         '''stuff for grid percentage field scanned'''
         self.Pseudo_Past_Position = 0
 
+        '''machine learning rotation stuff'''
+        self.Rotation_Angle = 0
+        self.Past_X = 0
+        self.Past_Y = 0
 
-    def update(self):
+
+    def update(self, collision_walls_group_horz_bottom, collision_walls_group_horz_top, collision_walls_group_vert_left, collision_walls_group_vert_right):
+
+        #print (self.Current_Animation)
+
+        '''collision stuff'''
+        wall_collision_list_horz_bottom = pygame.sprite.spritecollide(self, collision_walls_group_horz_bottom, False, pygame.sprite.collide_rect_ratio(1))
+        wall_collision_list_horz_top = pygame.sprite.spritecollide(self, collision_walls_group_horz_top, False, pygame.sprite.collide_rect_ratio(1))
+        wall_collision_list_vert_left = pygame.sprite.spritecollide(self, collision_walls_group_vert_left, False, pygame.sprite.collide_rect_ratio(1))
+        wall_collision_list_vert_right = pygame.sprite.spritecollide(self, collision_walls_group_vert_right, False, pygame.sprite.collide_rect_ratio(1))
 
         Stop_Arg = (self.x2-self.x1)
 
@@ -194,6 +207,79 @@ class Tank(pygame.sprite.Sprite):
             if self.Current_Y_position<self.y1:
                 self.Update_Animation('Navigate_Right')
 
+        elif self.Current_Animation=='Machine_Learning_Start':
+
+            self.Navigate_Bool = False
+
+            self.Current_X_position+=self.Buggy_Speed
+            self.image, self.rect = load_image('car.png', 'Car')
+            self.image = pygame.transform.rotate(self.image, -90)
+            self.image.set_colorkey((255,255,255))
+            self.rect.center = self.Current_X_position, self.Current_Y_position
+
+            if len(wall_collision_list_vert_right)!=0:
+                for wall in wall_collision_list_vert_right:
+                    self.Current_X_position = wall.rect.x - 40
+                    self.rect.center = self.Current_X_position, self.Current_Y_position
+                self.Current_Animation='Turn Randomly'
+
+        elif self.Current_Animation=='Machine_Learning_After':
+            self.Navigate_Bool = False
+
+            self.Current_X_position+=-self.Past_X
+            self.Current_Y_position+=-self.Past_Y
+            self.image, self.rect = load_image('car.png', 'Car')
+            self.image = pygame.transform.rotate(self.image, self.Rotation_Angle)
+            self.image.set_colorkey((255,255,255))
+            self.rect.center = self.Current_X_position, self.Current_Y_position
+
+            if len(wall_collision_list_vert_left)!=0 or len(wall_collision_list_horz_bottom)!=0 or len(wall_collision_list_vert_right)!=0 or len(wall_collision_list_horz_top)!=0:
+                for wall in wall_collision_list_vert_right:
+                    self.Current_X_position = wall.rect.x - 40
+                    self.rect.center = self.Current_X_position, self.Current_Y_position
+                for wall in wall_collision_list_vert_left:
+                    self.Current_X_position = wall.rect.x + 40
+                    self.rect.center = self.Current_X_position, self.Current_Y_position
+                for wall in wall_collision_list_horz_bottom:
+                    self.Current_Y_position = wall.rect.y - 40
+                    self.rect.center = self.Current_X_position, self.Current_Y_position
+                for wall in wall_collision_list_horz_top:
+                    self.Current_Y_position = wall.rect.y + 40
+                    self.rect.center = self.Current_X_position, self.Current_Y_position
+                self.Current_Animation='Turn Randomly'
+
+        elif self.Current_Animation=='Turn Randomly':
+
+            self.Get_random_angle()
+
+            if self.Rotation_Angle>0 and self.Rotation_Angle<91:
+                self.Angle_Factor_Y = (90-self.Rotation_Angle)/90
+                self.Angle_Factor_X = self.Rotation_Angle/90
+            elif self.Rotation_Angle>90 and self.Rotation_Angle<181:
+                self.Angle_Factor_Y = (90-self.Rotation_Angle)/90
+                self.Angle_Factor_X = (180-self.Rotation_Angle)/90
+
+            elif self.Rotation_Angle>180 and self.Rotation_Angle<271:
+                self.Angle_Factor_Y = (self.Rotation_Angle-270)/90
+                self.Angle_Factor_X = (180-self.Rotation_Angle)/90
+            elif self.Rotation_Angle>270 and self.Rotation_Angle<361:
+                self.Angle_Factor_Y = (self.Rotation_Angle-270)/90
+                self.Angle_Factor_X = (self.Rotation_Angle-360)/90
+
+            self.Current_X_position+=-self.Buggy_Speed*self.Angle_Factor_X
+            self.Past_X = self.Buggy_Speed*self.Angle_Factor_X
+
+            self.Current_Y_position+=-(self.Buggy_Speed*(self.Angle_Factor_Y))
+            self.Past_Y = (self.Buggy_Speed*(self.Angle_Factor_Y))
+
+            self.image, self.rect = load_image('car.png', 'Car')
+            self.image = pygame.transform.rotate(self.image, self.Rotation_Angle)
+            self.image.set_colorkey((255,255,255))
+            self.rect.center = self.Current_X_position, self.Current_Y_position
+
+            self.Current_Animation='Machine_Learning_After'
+
+
 
         elif self.Current_Animation=='Reset':
 
@@ -203,6 +289,32 @@ class Tank(pygame.sprite.Sprite):
             self.image.set_colorkey((255,255,255))
             self.rect.center = self.Current_X_position, self.Current_Y_position
 
+        elif self.Current_Animation=='Diagonal':
+            self.Navigate_Bool = False
+
+            self.Rotation_Angle = 10
+
+            if self.Rotation_Angle>0 and self.Rotation_Angle<91:
+                self.Angle_Factor_Y = (90-self.Rotation_Angle)/90
+                self.Angle_Factor_X = self.Rotation_Angle/90
+            elif self.Rotation_Angle>90 and self.Rotation_Angle<181:
+                self.Angle_Factor_Y = (90-self.Rotation_Angle)/90
+                self.Angle_Factor_X = (180-self.Rotation_Angle)/90
+
+            elif self.Rotation_Angle>180 and self.Rotation_Angle<271:
+                self.Angle_Factor_Y = (self.Rotation_Angle-270)/90
+                self.Angle_Factor_X = (180-self.Rotation_Angle)/90
+            elif self.Rotation_Angle>270 and self.Rotation_Angle<361:
+                self.Angle_Factor_Y = (self.Rotation_Angle-270)/90
+                self.Angle_Factor_X = (self.Rotation_Angle-360)/90
+
+
+            self.Current_X_position+=-self.Buggy_Speed*self.Angle_Factor_X
+            self.Current_Y_position+=-(self.Buggy_Speed*(self.Angle_Factor_Y))
+            self.image, self.rect = load_image('car.png', 'Car')
+            self.image = pygame.transform.rotate(self.image, self.Rotation_Angle)
+            self.image.set_colorkey((255,255,255))
+            self.rect.center = self.Current_X_position, self.Current_Y_position
 
 
     def Update_Animation(self, var):
@@ -228,3 +340,7 @@ class Tank(pygame.sprite.Sprite):
         else:
             rounded_perc = round(self.Field_Scanned_Perc, 2)
             return rounded_perc
+
+
+    def Get_random_angle(self):
+        self.Rotation_Angle = random.randint(0,360) 
