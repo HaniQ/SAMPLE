@@ -1,0 +1,156 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Finisar.SQLite;
+
+namespace TestText1
+{
+    class ConsoleApplication
+    {
+        static void Main()
+        {
+            //OPEN CONNECTION WITH DATABASE 
+            SQLiteConnection sqlite_conn; //instantiate object as reference
+            SQLiteCommand sqlite_cmd; //instantiate object as reference
+            SQLiteDataReader sqlite_datareader;//instantiate object as reference
+            string text; //declare string to read instructions
+            object Text; // declare object to read objects 
+            int myreader_last = 0; // declare integer to keep track of the last row checked 
+            int StartPhotos = 0; //declare integer to count number of photos taken 
+            int i = 0; //declare integer for keeping track of rows 
+            int myreader_new; //delcare integer to keep track of the newest row 
+
+            // create a new database connection:
+            sqlite_conn = new SQLiteConnection("Data Source=new_database.db;Version=3;New=True;Compress=True;");
+
+            // open the connection:
+            sqlite_conn.Open();
+            Console.WriteLine("Connection has been established");
+
+            sqlite_cmd = sqlite_conn.CreateCommand();
+
+            // Let the SQLiteCommand object know our SQL-Query:
+            sqlite_cmd.CommandText = "CREATE TABLE test (id integer primary key, text varchar(100));";
+
+            // Now lets execute the SQL ;D
+            sqlite_cmd.ExecuteNonQuery();
+
+            // create a new SQL command:
+            sqlite_cmd = sqlite_conn.CreateCommand();
+
+            // Lets insert something into our new table:
+            sqlite_cmd.CommandText = "INSERT INTO test (id, text) VALUES (1, 'ready');";
+
+            // And execute this again ;D
+            sqlite_cmd.ExecuteNonQuery();
+
+            sqlite_cmd.CommandText = "INSERT INTO test (id, text) VALUES (2, 'ready');";
+            // And execute this again ;D
+            sqlite_cmd.ExecuteNonQuery();
+
+            sqlite_cmd.CommandText = "INSERT INTO test (id, text) VALUES (3, 'done');";
+            // And execute this again ;D
+            sqlite_cmd.ExecuteNonQuery();
+
+            sqlite_cmd.CommandText = "SELECT * FROM test"; //gather all the information from the table
+
+            // Now the SQLiteCommand object can give us a DataReader-Object:
+            sqlite_datareader = sqlite_cmd.ExecuteReader();
+            sqlite_datareader.Read(); //instantiate the object
+
+            while (true) {
+                int index_length = i + 1;  // The number of the indexes should be i+1, so the first one is going to be 1  
+                int[] index = new int[index_length]; //the arrary is declared each time, so that it is dynamically growing with each incrementation of the program 
+                string[] rows = new string[index_length];  //This array is also delcared each time so that it is growing with eahc incrementation of the program 
+
+                //READ THE DATABASE 
+
+                while (sqlite_datareader.Read()) //When there are rows available to be read 
+                {
+                    string myreader = sqlite_datareader.GetString(0); // Get the first string of the id column (does it?)
+                    Console.WriteLine(myreader); // write the string that gets read 
+                    myreader_new = Int32.Parse(myreader); //convert it to an integer 
+                    
+                    //PLACE INDEX INTO ARRAY 
+                    index[i] = myreader_new; // place it into the index 
+                    Text = sqlite_datareader["text"]; // Make   
+                    text = Convert.ToString(Text);
+                    Console.WriteLine(Text);
+                    text = text.ToUpper();
+                   
+                    //PLACE INSTRUCTION INTO ARRAY 
+                    rows[i] = text;
+
+                    Console.WriteLine("The value of last id in the array is:");
+                   // Console.WriteLine(index[index_length]);
+
+                    int last_row = index[i];
+                    string last_inst = rows[i];
+
+                    if (last_row == myreader_last)
+                    {
+                        Thread.Sleep(3000);
+                        Console.WriteLine("Same line mate");
+                    }
+
+                    else if (last_row == (myreader_last + 1))
+                    {
+                        myreader_last++;
+                        Console.WriteLine("There's a new instruction");
+
+                        if (last_inst == "READY") // If it is READY then proceed with this loop 
+                        {
+                            do
+                            {
+                                for (StartPhotos = 0; StartPhotos < 5; StartPhotos++) //Iteration loop 
+                                {
+                                    Console.WriteLine("Taking photo with current settings..."); //Print that the caemera is taking photos 
+                                    Thread.Sleep(2000);
+                                    index_length++;
+                                }
+                            } while (StartPhotos < 5);
+
+                        }
+                        else if (last_inst == "DONE")
+                        {
+                            sqlite_conn.Close();
+                            Console.WriteLine("Buggy's on the move");
+                        }
+
+                        else if (last_inst == "END")
+                        {
+                            sqlite_conn.Close();
+                            Console.WriteLine("That's the end of the program");
+                        }
+                        else
+                        {
+                            Console.WriteLine("It's not worked... Why not?");
+                            Thread.Sleep(3000);
+                        }
+                        Console.WriteLine("BREAK1");
+                    }
+                    i++;
+                    Console.WriteLine("i is:");
+                    Console.WriteLine(i);
+                }
+            }
+               
+            }
+        }
+    }
+
+
+         // String timeStamp = GetTimestamp(DateTime.Now);
+         // Print out the content of the text field:
+         // String timeStamp = GetTimestamp(DateTime.Now);
+      // Print onto the console what it is 
+     //Thread.Sleep(3000); 
+
+         /*   public static String GetTimestamp(DateTime value)
+            {
+                return value.ToString("yyyyMMddHHmmssffff");
+            } */
+
