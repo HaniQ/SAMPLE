@@ -3,55 +3,285 @@
 
 <head>
 
-	<title>TEAM8</title>
-	<!--This is what will be written on the tab in a webpage-->
+    <title>Home Page | Project Sample</title>
+    <!--This is what will be written on the tab in a webpage-->
 
-	<meta http-equiv="refresh" content="30000">
-	<!--This is used to refresh the page every 30000 seconds automatically-->
+    <meta http-equiv="refresh" content="30000">
+    <!--This is used to refresh the page every 30000 seconds automatically-->
 
-	<style>
-		body {
-			background-image: url("http://storage.googleapis.com/wzukusers/user-12878378/images/550c490086385KvMjrST/background.png");
-			background-size: 100% 100%;
-			width: 100%;
-			height: 100%;
-			height: auto !important;
-			min-height: 100%;
-		}
-	</style>
+    <style>
+        body {
+            background-color : #000;
+            margin: 0;
+            color: white;
+            font-family: 'Consolas';
+            position: relative;
+        }
+
+        .MainContainer {
+            background: url('http://cdn.designbeep.com/wp-content/uploads/2012/01/12.free-carbon-fiber-textures.jpg') no-repeat center center fixed; 
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+            margin: 0 auto;
+            width: 70%;
+            height: auto; 
+            border: 1px solid black;
+        }
+
+        .Heading {
+            width: 30%;
+            background-color: #141111;
+            margin: 0 auto;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            border: 2px solid black;
+            font-weight: bold;
+            font-size: 35px;
+            padding: 5px;
+            text-align: center;
+            -webkit-transition: all 400ms;
+          -moz-transition: all 400ms;
+          -ms-transition: all 400ms;
+          -o-transition: all 400ms;
+
+        }
+
+        .Heading:hover {
+            background-color: #2B2929;
+            transform: scale(1.1);
+            border: 3px solid black;
+            -webkit-transition: all 400ms;
+          -moz-transition: all 400ms;
+          -ms-transition: all 400ms;
+          -o-transition: all 400ms;
+        }
+
+        .BpCont {
+            width: 80%;
+            display: block;
+            margin: 0 auto;
+            margin-top: 7px;
+            border: 3px solid black;
+            -webkit-transition: all 400ms;
+          -moz-transition: all 400ms;
+          -ms-transition: all 400ms;
+          -o-transition: all 400ms;
+
+        }
+
+        .BpCont img:hover {
+            background-color: #2B2929;
+            transform: scale(1.05);
+            border: 3px solid black;
+            -webkit-transition: all 400ms;
+          -moz-transition: all 400ms;
+          -ms-transition: all 400ms;
+          -o-transition: all 400ms;
+        }
+
+        .BpCont img {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            border: 1px solid black;
+            -webkit-transition: all 400ms;
+          -moz-transition: all 400ms;
+          -ms-transition: all 400ms;
+          -o-transition: all 400ms;
+        }
+
+        .Info, .ExtendedInfo {
+            border: 3px solid black;
+            width: 79%;
+            margin: 0 auto;
+            margin-top: 10px;
+            padding: 10px;
+            text-align: left;
+            background-color: #141111;
+            -webkit-transition: all 400ms;
+          -moz-transition: all 400ms;
+          -ms-transition: all 400ms;
+          -o-transition: all 400ms;
+
+        }
+
+        .Info:hover , .ExtendedInfo:hover {
+            background-color: #2B2929;
+            transform: scale(1.1);
+            border: 3px solid black;
+            -webkit-transition: all 400ms;
+          -moz-transition: all 400ms;
+          -ms-transition: all 400ms;
+          -o-transition: all 400ms;
+        }
+
+        .MasterLinkContainer {
+            display: inline-block;
+             position: relative;
+             left: 50%;
+             transform: translateX(-50%);
+            border: 3px solid black;
+            width: 79%;
+            margin: 0 auto;
+            margin-top: 10px;
+            padding: 10px;
+            text-align: left;
+            background-color: #141111;
+            -webkit-transition: all 400ms;
+          -moz-transition: all 400ms;
+          -ms-transition: all 400ms;
+          -o-transition: all 400ms;
+
+        }
+
+        .MasterLinkContainer img {
+            width: 100%;
+            height: auto;
+            display: inline-block;
+            margin: 0 auto;
+            border: 1px solid black;
+        }
+
+        .ControlCont {
+            margin-top: -3%; 
+            display: inline-block;
+            width: 49%;
+            float: left;
+        }
+
+        .ManualControl, .GMap, .VC, .Visu{
+            display: inline-block;
+            width: 100%;
+            float: left;
+            border: 1px solid white;
+            font-size: 20px;
+            text-align: center;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            margin-top: 30px;
+            -webkit-transition: all 400ms;
+          -moz-transition: all 400ms;
+          -ms-transition: all 400ms;
+          -o-transition: all 400ms;
+        }
+
+        .MainImg{
+            postion: absolute;
+            display: inline-block;
+            width: 50%;
+            float: right;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            margin-top: -1%;
+            -webkit-transition: all 400ms;
+          -moz-transition: all 400ms;
+          -ms-transition: all 400ms;
+          -o-transition: all 400ms;
+        }
+
+        .ManualControl:hover, .GMap:hover, .VC:hover, .Visu:hover{
+            background-color: #2B2929;
+            opacity: 0.9;
+            border: 1px solid white;
+            -webkit-transition: all 400ms;
+          -moz-transition: all 400ms;
+          -ms-transition: all 400ms;
+          -o-transition: all 400ms;
+          cursor: pointer;
+        }
+
+    </style>
 
 </head>
 
 <body>
 
+    <div class='MainContainer'>
 
+        <div class='Heading'>PROJECT SAMPLE</div>
 
-	<h1 style="text-align:center;">Team Eight Multi-Purpose Automated Vehicle</h1>
+        <div class='BpCont'> <img src="http://i.imgur.com/ktDx8rA.jpg" alt=""></div>
 
-	<h4 title="Description of the team" style="height:30px; width:900px">This is the fourth year engineering project conducted in the
-		<a href="http://www.manchester.ac.uk/">University of Manchester.</a> The team consists of Ekram, Daniel, Hani, Sanket, Shihab and Hussein. The aim of the team is to create a multi-purpose semi autonomous vehicle which will for the moment be used to detect land mines and to assess the health of grass. Picture of the buggy has been attached below.</h4>
+        <div class='Info'>This is the fourth year engineering project conducted in the
+        University of Manchester.</a> The team consists of Ekram, Daniel, Hani, Sanket, Shihab and Hussein. The aim of the team is to create a multi-purpose semi autonomous vehicle which will for the moment be used to detect land mines and to assess the health of grass. Experimental pictures of the buggy has been attached above.</div>
 
-	<img src="http://i.imgur.com/wj0FNSj.jpg" alt="Buggy" width="340" height="362">
+        <div class='ExtendedInfo'>The main mode of control for the buggy will be through the internet through a browser web-page. This decision was mainly to make it so that the control was platform independant since almost all smart devices nowadays such as phones and tablets come equipped with a web-browser. The various different forms of control along with run-time visualisation have been provided as links below.    
+        </div>
 
-	<video width="320" height="420" controls>
-  <source src="Test Run.mp4" type="video/mp4">
+        <div class='MasterLinkContainer'>
+
+            <div class='ControlCont'>
+                <div class='ManualControl' id="MC" onmouseover="Show()" onmouseout="Hide()">Manual Remote Control</div>
+                <div class='GMap' id="MAP" onmouseover="Show1()" onmouseout="Hide1()">Google Map Based Control</div>
+                <div class='VC' id="VC" onmouseover="Show2()" onmouseout="Hide2()">Voice Recognition</div>
+                <div class='Visu' id="VIS" onmouseover="Show3()" onmouseout="Hide3()">Run-time Visualisation</div>
+            </div>
+        
+            <div class='MainImg' ><img src="http://i.imgur.com/IbC5Zlt.jpg" id="prev"></div>
+        </div>
+    
+    </div>
+
+    <script>
+
+        var IP = '{{IP_Address}}'
+
+        document.getElementById("MC").addEventListener("click", () => {
+            window.location.href = "http://"+IP+":7000/DBUTTONS";  
+        }, false);
+
+        document.getElementById("MAP").addEventListener("click", () => {
+            window.location.href = "http://"+IP+":7000/RootMap" ; 
+        }, false);
+
+        document.getElementById("VC").addEventListener("click", () => {
+            window.location.href = "http://"+IP+":7000/VoiceRec" ; 
+        }, false);
+
+        document.getElementById("VIS").addEventListener("click", () => {
+            window.location.href = "http://"+IP+":7000/DBUTTONS"; 
+        }, false);
+
+        function Show() {
+            document.getElementById("prev").src = "http://i.imgur.com/1Myzi8s.jpg";
+        }
+
+        function Hide() {
+            document.getElementById("prev").src = "http://i.imgur.com/IbC5Zlt.jpg"; 
   
-Your browser does not support the video tag.
-</video>
+        } 
 
+        function Show1() {
+            document.getElementById("prev").src = "http://i.imgur.com/en8rO7X.jpg";
+        }
 
-<h1>MANUAL DBUTTON BASED BROWSER LINK:</h1>
-<a href="http://192.168.43.244:5000/DBUTTONS">TO MANUAL BROWSER BASED TANK CONTROL</a>
-<br>
+        function Hide1() {
+            document.getElementById("prev").src = "http://i.imgur.com/IbC5Zlt.jpg"; 
+  
+        } 
 
+        function Show2() {
+            document.getElementById("prev").src = "http://i.imgur.com/nl0fB3m.jpg";
+        }
 
-<h1>GOOGLE MAP NAVIGATION:</h1>
-<a href="http://192.168.43.244:5000/RootMap">TO Google MAPS</a>
-<br>
+        function Hide2() {
+            document.getElementById("prev").src = "http://i.imgur.com/IbC5Zlt.jpg"; 
+  
+        } 
 
-<h1>VOICE RECOGNITION CONTROL:</h1>
-<a href="http://192.168.43.244:5000/VoiceRec">TO Voice activated control</a>
+        function Show3() {
+            document.getElementById("prev").src = "http://i.imgur.com/hw5n5XN.jpg";
+        }
 
+        function Hide3() {
+            document.getElementById("prev").src = "http://i.imgur.com/IbC5Zlt.jpg"; 
+  
+        } 
+
+    </script>
 
 
 
