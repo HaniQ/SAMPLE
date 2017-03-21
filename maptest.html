@@ -1,236 +1,525 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-    <meta charset="utf-8">
-    <title>Marker Labels</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <style>
-      /* Always set the map height explicitly to define the size of the div
-       * element that contains the map. */
-      #map {
+    <head> 
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+        <meta charset="utf-8">
+        <title>Marker Labels</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+        <style>
+
+        #map {
         height: 100%;
-      }
-      /* Optional: Makes the sample page fill the window. */
-      html, body {
+        color: black;
+        } 
+        /* Optional: Makes the sample page fill the window. */
+        html, body {
         height: 90%;
         margin: 0;
         padding: 0;
+        background-color: #312929;
+        color: white;
+        font-family: 'Consolas';
+        }
+
+        .NDVI {
+            opacity: 0.8;
+            width:200px;
+            height:60px;
+            background-color: black;
+            color:white;
+            font-family:Segoe;
+            font-size: 30px;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 60px;       /* the same as your div height */
+            font-weight: bold;
+            position: relative;
+            bottom: 370px;
+            right: -1350px;
+            cursor: pointer;
+        -webkit-transition: all 400ms;
+          -moz-transition: all 400ms;
+          -ms-transition: all 400ms;
+          -o-transition: all 400ms;
+
+        }
+
+        .clean {
+            opacity: 0.8;
+            width:200px;
+            height:60px;
+            background-color: black;
+            color:white;
+            font-family:Segoe;
+            font-size: 30px;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 60px;       /* the same as your div height */
+            font-weight: bold;
+            position: relative;
+            bottom: 360px;
+            right: -1350px;
+            cursor: pointer;
+        -webkit-transition: all 400ms;
+          -moz-transition: all 400ms;
+          -ms-transition: all 400ms;
+          -o-transition: all 400ms;
+
+        }
+
+        .NDVI:hover, .clean:hover {
+            transform: scale(1.1);
+            border: 1px solid white;
+        -webkit-transition: all 400ms;
+          -moz-transition: all 400ms;
+          -ms-transition: all 400ms;
+          -o-transition: all 400ms;
+        }
+
+        #NE_RECT,#idTEXT1, #idTEXT2, #SW_RECT {
+            background-color: black;
+            width: 35%;
+            height: 60px;
+            font-size: 25pt;
+            color: white;
+            font-family: 'Consolas';
+            border: 1px solid black;
+            padding-left: 10px;
+          -webkit-transition: all 400ms;
+          -moz-transition: all 400ms;
+          -ms-transition: all 400ms;
+          -o-transition: all 400ms;
+        }
+
+        #NE_RECT:hover,#idTEXT1:hover, #idTEXT2:hover, #SW_RECT:hover {
+            transform: scale(1.05);
+            border: 1px solid white;
+            -webkit-transition: all 400ms;
+          -moz-transition: all 400ms;
+          -ms-transition: all 400ms;
+          -o-transition: all 400ms;
       }
-    </style>
-    <script src="https://maps.googleapis.com/maps/api/js?"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?libraries=drawing"></script>
-      
-    <script>
 
-      // In the following example, markers appear when the user clicks on the map.
-      // Each marker is labeled with a single alphabetical character.
-      var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      var labelIndex = 0;
-
-      function initialize() {
-        
-        var CustomStrokeOpac = 0;
-        
-        JSlat = {{LATpy}};
-        JSlong = {{LONGpy}};
-        
-        
-        Start_Lat = {{FinalStartLat}} ;    //53.47541458927207;
-        Start_Long = {{FinalStartLong}};   //-2.2344839572906494; 
-        
-        var sackville = { lat: Start_Lat, lng: Start_Long };             //This could be current GPS co ordinate of tank8. A dynamic value from the server backend would update tis value with tank co-ordinate
-        var Destination = { lat: JSlat, lng: JSlong };
-        
-        //THIS SECTION IS TO ALLOW THE USER TO DRAW SHAPES ON THE MAP
-          var drawingManager = new google.maps.drawing.DrawingManager({
-          drawingMode: google.maps.drawing.OverlayType.MARKER,
-          drawingControl: true,
-          drawingControlOptions: {
-            position: google.maps.ControlPosition.TOP_CENTER,
-            drawingModes: ['marker', 'circle', 'polygon', 'polyline', 'rectangle']
-          },
-          markerOptions: {icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'},
-          circleOptions: {
-            fillColor: '#ffff00',
-            fillOpacity: 1,
-            strokeWeight: 5,
-            clickable: false,
-            editable: true,
-            zIndex: 1
-          }
-        });
-          //USER DRAWN SHAPES SECTION END------------------------------------//
-        
-        //This section is to draw a polyline from starting destination to ending destination
-        var flightPlanCoordinates = [
-          {lat: Start_Lat, lng: Start_Long},
-          {lat: JSlat, lng: JSlong}
-
-        ];
-        
-        if( (JSlat == 0) ) {
-          CustomStrokeOpac = 0;
+        #idSubmit, #RECT_SUBMIT {
+            width: 7%;
+            padding: 10px;
+            font-family: 'Consolas';
+            font-size: 15px;
+            background-color: black;
+            color: white;
+            border: 1px solid black;
+            -webkit-transition: all 400ms;
+          -moz-transition: all 400ms;
+          -ms-transition: all 400ms;
+          -o-transition: all 400ms;
         }
-        else {
-          CustomStrokeOpac = 1.0;
-        }
-        
-        document.getElementById('DestLat').innerHTML = "Destination latitide is: " + JSlat;
-        document.getElementById('DestLong').innerHTML = "Destination longitude is: " + JSlong;
-        
-        var flightPath = new google.maps.Polyline({
-          path: flightPlanCoordinates,
-          geodesic: true,
-          strokeColor: '#FF0000',
-          strokeOpacity: CustomStrokeOpac,
-          strokeWeight: 2
-        });
 
-  
-      //---------------------POLYLINE SECTION END-----------------------------------------------//
-        
-        //This section is to add info windows on start markers,
-        var contentString1 = '<div id="content">'+
-            '<div id="siteNotice">'+
-            '</div>'+
-            '<h1 id="firstHeading" class="firstHeading">Team8 Tank</h1>'+
-            '<div id="bodyContent">'+
-            '<p>This is the current GPS co-ordinate of the team8 multi-purpose tank. Through this map, the tank is able to be controlled remotely simply through clicking on a destination on the map (marked by a finish flag). Press the submit button when sure of the destination. The back-end algorithm will handle the movement of the buggy to the chosen finishing spot. In the future after pressing submit a dynamic window will pop up where the path of the tank approaching the ending destiantion will be visualised.</p>'+
-            '</div>'+
-            '</div>';
+        #idSubmit:hover, #RECT_SUBMIT:hover {
+        transform: scale(1.1);
+        border: 1px solid white;
+            -webkit-transition: all 400ms;
+          -moz-transition: all 400ms;
+          -ms-transition: all 400ms;
+          -o-transition: all 400ms;
+        }
+
+
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <div>
+            <!-- Search Form.  INSTEAD OF action going to google/search it has been edited to go to decipher function on Rclaw.py-->
+            <form id="idPOSITION" method="POST" action="{{ url_for('PRINTps') }}">
+                <div class="speech">
+                    <input type="text" name="LAT" id="idTEXT1" placeholder="Enter Latitude" />
+                    <input type="text" name="LONG" id="idTEXT2" placeholder="Enter Longitude" />
+                    
+                    <input type="submit" value="S U B M I T" id="idSubmit" />
+                </div>
+            </form>
             
-        var infowindow1 = new google.maps.InfoWindow({
-          content: contentString1
-        });
+        </div>
+
+        <br>
+
+        <form id="SubmitRECT" method="POST" action="{{ url_for('PRINTps') }}">
+            <div class="draw">
+                <input type="text" name="NE_RECT" id="NE_RECT" placeholder="....."/>
+                <input type="text" name="SW_RECT" id="SW_RECT" placeholder="....."  />
+                
+                <input type="submit" value="S U B M I T" id="RECT_SUBMIT" />
+            </div>
+        </form>
         
-       
+        <h1 id="1HEAD">String readings</h1>
+        
+        <br>
+        
+        <h1 id="DestLat">Waiting for input</h1>
+        <h1 id="DestLong">Waiting for input</h1>
+
+        <div class='NDVI' id='NDVI'>PLOT  NDVI</div>
+
+        <div class='clean' id='clean'>CLEAN MAP</div>
+
+
+        <!--   Actual map script start -->
+
+        <script>
+
+        //Custom Google Map created by Ekram for the sample project
+        //Meant to be running through flask i.e hosted through python
+        //Contains variables which are dependant on variables pushed from the python script
+
+        var IP = '{{IP_Address}}'
+
+        document.getElementById("NDVI").addEventListener("click", () => {
+            window.location.href = "http://" + IP + ":7000/NDVI";
+        }, false);
+
+        document.getElementById("clean").addEventListener("click", () => {
+            window.location.href = "http://" + IP + ":7000/RootMap";
+        }, false);
+
+
+        var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        var labelIndex = 0;
+
+        JSlat = 53.47541458927213 //{{LATpy}};              //These are the variables entered by the user
+        JSlong = -2.2344839572906499 //{{LONGpy}};
+
+        Start_Lat = {{FinalStartLat}} ;    
+        Start_Long = {{FinalStartLong}};   
+
+        var NDVI_COORD_STRING = '{{FullString_NDVI}}';
+        var NDVI_COORD_LIST = NDVI_COORD_STRING.split(':');
+        NDVI_COORD_LIST.pop();
+
+        var RGB_LIST_STRING = '{{FullString_RGB}}' ;
+        var RGB_LIST = RGB_LIST_STRING.split(':');
+        RGB_LIST.pop();
+
+
+        function initialize() {
+            var CustomStrokeOpac = 0;
+            //THIS SECTION IS TO ALLOW THE USER TO DRAW SHAPES ON THE MAP
+            var drawingManager = new google.maps.drawing.DrawingManager({
+                drawingMode: google.maps.drawing.OverlayType.MARKER,
+                drawingControl: true,
+                drawingControlOptions: {
+                position: google.maps.ControlPosition.TOP_CENTER,
+                drawingModes: ['marker', 'circle', 'polygon', 'polyline', 'rectangle']},
+                markerOptions: {icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'},
+                circleOptions: {
+                fillColor: '#ffff00',
+                fillOpacity: 1,
+                strokeWeight: 5,
+                clickable: true,
+                editable: true,
+                zIndex: 1}
+                });
+
+        //USER DRAWN SHAPES SECTION END------------------------------------//
+
+
+            //This section is to draw a polyline from starting destination to ending destination
+            var flightPlanCoordinates = [
+              {lat: Start_Lat, lng: Start_Long},
+              {lat: JSlat, lng: JSlong}
+            ];
+
+            if( (JSlat == 0) ) {
+              CustomStrokeOpac = 0;
+            }
+            else {
+              CustomStrokeOpac = 1.0;
+            }
+
+            document.getElementById('DestLat').innerHTML = "Destination latitide is: " + JSlat;
+            document.getElementById('DestLong').innerHTML = "Destination longitude is: " + JSlong;
+
+            var flightPath = new google.maps.Polyline({
+              path: flightPlanCoordinates,
+              geodesic: true,
+              strokeColor: '#FF0000',
+              strokeOpacity: CustomStrokeOpac,
+              strokeWeight: 2
+            });
+
+            //-----drawing manager--------------------//
+            var drawingManager = new google.maps.drawing.DrawingManager({
+              drawingMode: google.maps.drawing.OverlayType.MARKER,
+              drawingControl: true,
+
+              drawingControlOptions: {
+                position: google.maps.ControlPosition.TOP_CENTER,
+                drawingModes: ['marker', 'circle', 'polygon', 'polyline', 'rectangle']
+              },
+
+              markerOptions: {icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'},
+
+              rectangleOptions: {
+                fillColor: '#ffffff',
+                fillOpacity: 0.2,
+                strokeWeight: 5,
+                clickable: true,
+                draggable: true,
+                editable: true,
+                zIndex: 1
+                },
+
+              polygonOptions: {
+                fillColor: '#ffffff',
+                fillOpacity: 0.2,
+                strokeWeight: 5,
+                clickable: true,
+                draggable: true,
+                editable: true,
+                zIndex: 1
+                },
+
+              circleOptions: {
+                fillColor: '#ffff00',
+                fillOpacity: 0.2,
+                strokeWeight: 5,
+                clickable: true,
+                draggable: true,
+                editable: true,
+                zIndex: 1
+                }
+            });
+
+        //---------------------POLYLINE SECTION END-----------------------------------------------//
+
+        //This section is to add info windows on start markers,
+            var contentString1 = '<div id="content">'+
+                '<div id="siteNotice">'+
+                '</div>'+
+                '<h1 id="firstHeading" class="firstHeading">Team8 Tank</h1>'+
+                '<div id="bodyContent">'+
+                '<p>This is the current GPS co-ordinate of the team8 multi-purpose tank. Through this map, the tank is able to be controlled remotely simply through clicking on a destination on the map (marked by a finish flag). Press the submit button when sure of the destination. The back-end algorithm will handle the movement of the buggy to the chosen finishing spot. In the future after pressing submit a dynamic window will pop up where the path of the tank approaching the ending destiantion will be visualised.</p>'+
+                '</div>'+
+                '</div>';
+                
+            var infowindow1 = new google.maps.InfoWindow({
+              content: contentString1
+            });
+
         // ------------------------------INFOWINDOW SECTION END-----------------------------//
-        
-        //MAIN GOOGLE MAP CREATION INSTANCE
-        var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 20,
-          center: sackville,
-          mapTypeId: google.maps.MapTypeId.HYBRID  
-        });
-        
 
-        // This event listener calls addMarker() when the map is clicked.
-        google.maps.event.addListener(map, 'click', function(event) {
-          addMarker(event.latLng, map);
-       
-       
-        x = JSON.stringify(event.latLng);     // Converting event.latLng which is an object into a string containing both lat and longitudes. Since the variable itself is an object containing both lat and long, a lot of string conversion and manipulation has to be carried out to get separate decimal lat and long
-        
-        //A LOT OF STRING SLICING AND CONVERSION. THERE HAS TO BE AN EASIER WAY THAN THIS BUT WITH MY LIMITED JS KNOWLEDGE THIS WAS WHAT I HACKED TOGETHER TO GET THE JOB DONE
-        
-        SlicedLat = x.slice(7,29);            // Slicing the above string to just lat 
-        SlicedLong = x.slice(29,53);          //Slicing rest of it into longitude 
-        
-        LatLastCommaIndex = SlicedLat.lastIndexOf(",") ;
-        FinalSlicedLat = SlicedLat.slice(0,(LatLastCommaIndex));
-        
-        LongFirstSemiColonIndex = SlicedLong.indexOf(":") ;
-        LongLastCurlyBracketIndex = SlicedLong.lastIndexOf("}") ;
-        FinalSlicedLong = SlicedLong.slice(LongFirstSemiColonIndex+1,LongLastCurlyBracketIndex) ; //The variable names might look stupid but this is the only way I remember what they do
-        //STRING SLICING END
-        
-         document.getElementById('1HEAD').innerHTML = x;
-       
-      
-      //THIS SECTION AUTOMATICALLY FILLS IN THE $ TEXT BOX AT BOTTOM WHEN SOMEONE CLICKS MAP
-          var TheTextBox1 = document.getElementById("idTEXT1");
-          TheTextBox1.value = FinalSlicedLat;
-          
-          var TheTextBox2 = document.getElementById("idTEXT2");
-          TheTextBox2.value = FinalSlicedLong;
+            var sackville = {lat: Start_Lat, lng: Start_Long};
+            var Destination = { lat: JSlat, lng: JSlong };
 
-          var TheTextBox3 = document.getElementById("idTEXT3");
-          TheTextBox3.value = '1';
-          
-          var TheTextBox4 = document.getElementById("idTEXT4");
-          TheTextBox4.value = '1';
-          
-        
-        //jQuery(function(){
-          //jQuery('#idSubmit').click();      
-              //});
-        
-        });
 
+            //==============================ACTUAL MAP=========================================//
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 20,
+                center: sackville,
+                mapTypeId: google.maps.MapTypeId.HYBRID
+                });
+
+
+
+        //SECTION FOR HEATMAP AKA PLACING NDVI VALUES ON THE FIELD
+            var NDVI_COUNT = 0;
+
+            while (NDVI_COUNT<RGB_LIST.length) {
+                var string_from_list = NDVI_COORD_LIST[NDVI_COUNT]; 
+                var Split_the_string = string_from_list.split(',');
+
+                var lat_NDVI = parseFloat(Split_the_string[0]);
+                var long_NDVI = parseFloat(Split_the_string[1]);
+
+                var heatmapData = [
+                    new google.maps.LatLng(lat_NDVI, long_NDVI)
+                ];
+
+                var heatmap = new google.maps.visualization.HeatmapLayer({
+                  data: heatmapData,
+                  dissipating: true,
+                  radius:50
+                });
+
+                //Gradient stuff
+                var gradient = [
+                              'rgba(0, 255, 255, 0)',
+                              RGB_LIST[NDVI_COUNT],
+                              RGB_LIST[NDVI_COUNT],
+                              RGB_LIST[NDVI_COUNT],
+                              RGB_LIST[NDVI_COUNT],
+                              RGB_LIST[NDVI_COUNT],
+                              RGB_LIST[NDVI_COUNT],
+                              RGB_LIST[NDVI_COUNT],
+                              RGB_LIST[NDVI_COUNT]
+                            ]
+
+                heatmap.set('gradient', heatmap.get('gradient') ? null : gradient);
+                addNDVIMarker(lat_NDVI,long_NDVI, RGB_LIST[NDVI_COUNT], map);
+                heatmap.setMap(map);                // Add heatmap onto the map
+                NDVI_COUNT = NDVI_COUNT + 1;
+            }
+
+
+                // This event listener calls addMarker() when the map is clicked.
+            google.maps.event.addListener(map, 'click', function(event) {
+                addMarker(event.latLng, map);
+
+                x = JSON.stringify(event.latLng);     // Converting event.latLng which is an object into a string containing both lat and longitudes. Since the variable itself is an object containing both lat and long, a lot of string conversion and manipulation has to be carried out to get separate decimal lat and long
+
+                //A LOT OF STRING SLICING AND CONVERSION. THERE HAS TO BE AN EASIER WAY THAN THIS BUT WITH MY LIMITED JS KNOWLEDGE THIS WAS WHAT I HACKED TOGETHER TO GET THE JOB DONE
+
+                SlicedLat = x.slice(7,29);            // Slicing the above string to just lat 
+                SlicedLong = x.slice(29,53);          //Slicing rest of it into longitude 
+
+                LatLastCommaIndex = SlicedLat.lastIndexOf(",") ;
+                FinalSlicedLat = SlicedLat.slice(0,(LatLastCommaIndex));
+
+                LongFirstSemiColonIndex = SlicedLong.indexOf(":") ;
+                LongLastCurlyBracketIndex = SlicedLong.lastIndexOf("}") ;
+                FinalSlicedLong = SlicedLong.slice(LongFirstSemiColonIndex+1,LongLastCurlyBracketIndex) ; //The variable names might look stupid but this is the only way I remember what they do
+                //STRING SLICING END
+
+                document.getElementById('1HEAD').innerHTML = x;
+
+
+                    //THIS SECTION AUTOMATICALLY FILLS IN THE $ TEXT BOX AT BOTTOM WHEN SOMEONE CLICKS MAP
+                var TheTextBox1 = document.getElementById("idTEXT1");
+                TheTextBox1.value = FinalSlicedLat;
+                  
+                var TheTextBox2 = document.getElementById("idTEXT2");
+                TheTextBox2.value = FinalSlicedLong;
+                var TheTextBox3 = document.getElementById("idTEXT3");
+                TheTextBox3.value = '1';
+                  
+                var TheTextBox4 = document.getElementById("idTEXT4");
+                TheTextBox4.value = '1';
+            });
+
+            google.maps.event.addListener(drawingManager, 'rectanglecomplete', function(rectangle) {
+                var ne = rectangle.getBounds().getNorthEast();
+                var sw = rectangle.getBounds().getSouthWest();
+
+                console.log(ne.lat() + ',' + ne.lng());
+                console.log(sw.lat() + ',' + sw.lng());
+
+                var RECTBox1 = document.getElementById("NE_RECT");
+                  
+                var RECTBox2 = document.getElementById("SW_RECT");
+                RECTBox2.value = sw.lat() + ',' + sw.lng();
+
+                var p1 = new google.maps.LatLng(ne.lat(), sw.lng());
+                var p2 = new google.maps.LatLng(ne.lat(), ne.lng());
+                var p3 = new google.maps.LatLng(sw.lat(), ne.lng());
+
+                console.log('Width of rectangle is: '+calcDistance(p1, p2) + 'm');
+                console.log('Height of rectangle is: '+calcDistance(p2, p3) + 'm');
+
+                RECTBox1.value = calcDistance(p1, p2) + 'm' + ' | ' +calcDistance(p2, p3) + 'm';
+                
+            });
+
+            google.maps.event.addListener(drawingManager, 'rectanglecomplete', function(rectangle) {
+                google.maps.event.addListener(rectangle, 'bounds_changed', function () {
+                    var ne = rectangle.getBounds().getNorthEast();
+                    var sw = rectangle.getBounds().getSouthWest();
+
+                    console.log(ne.lat() + ',' + ne.lng());
+                    console.log(sw.lat() + ',' + sw.lng());
+
+                    var RECTBox1 = document.getElementById("NE_RECT");
+                      
+                    var RECTBox2 = document.getElementById("SW_RECT");
+                    RECTBox2.value = sw.lat() + ',' + sw.lng();
+
+                    var p1 = new google.maps.LatLng(ne.lat(), sw.lng());
+                    var p2 = new google.maps.LatLng(ne.lat(), ne.lng());
+                    var p3 = new google.maps.LatLng(sw.lat(), ne.lng());
+
+                    console.log('Width of rectangle is: '+calcDistance(p1, p2) + 'm');
+                    console.log('Height of rectangle is: '+calcDistance(p2, p3) + 'm');
+
+                    RECTBox1.value = calcDistance(p1, p2) + 'm' + ' | ' +calcDistance(p2, p3) + 'm';
+                });
+            });
 
           // Add a marker at the Tank starting position on the map, with a tank icon image
-          var Tank_Image;
-          if(Start_Long > JSlong) {
-            Tank_Image = "http://i.imgur.com/GdkfuEh.png"       //Tank image icon face left       
-          }
-          else {
-            Tank_Image = "http://i.imgur.com/gyMGJOL.png"       //Tank image icon face right
-          }
-          var Start_Marker = new google.maps.Marker({
-          position: sackville,                                   
-          label: labels[0],
-          map: map,
-          icon: Tank_Image
-        });
-          Start_Marker.addListener('click', function() {
-          infowindow1.open(map, Start_Marker);
-        });
-      
-        
-        
-        addMarker(Destination, map);        // Add marker to destination through previous form
-        flightPath.setMap(map);             //Add the polylines
-        drawingManager.setMap(map);          // add the interface to let users draw shapes
+            var Tank_Image;
+            if(Start_Long > JSlong) {
+                Tank_Image = "http://i.imgur.com/GdkfuEh.png"       //Tank image icon face left       
+            }
+            else {
+                Tank_Image = "http://i.imgur.com/gyMGJOL.png"       //Tank image icon face right
+            }
 
-      }
+            var Start_Marker = new google.maps.Marker({
+                position: sackville,                                   
+                label: labels[0],
+                map: map,
+                icon: Tank_Image
+            });
+          
+            Start_Marker.addListener('click', function() {        //makes the info window open
+                infowindow1.open(map, Start_Marker);
+            });
 
-      // Adds a marker to the map.
-      function addMarker(location, map) {
-        // Add the marker at the clicked location, and add the next-available label
-        // from the array of alphabetical characters.
-        var Finish_Flag = "http://i.imgur.com/flzzJGj.png"
-        var marker = new google.maps.Marker({
-          position: location,                                 
-          label: labels[2],
-          map: map,
-          icon: Finish_Flag
-        });
-             
-      }
+            addMarker(Destination, map);        // Add marker to destination through previous form
+            flightPath.setMap(map);             //Add the polylines
+            drawingManager.setMap(map);          // add the interface to let users draw shapes
+        }
 
-      google.maps.event.addDomListener(window, 'load', initialize);
-      
+        function addMarker(location, map) {
+            // Add the marker at the clicked location, and add the next-available label
+            // from the array of alphabetical characters.
+            var Finish_Flag = "http://i.imgur.com/flzzJGj.png"
+            var marker = new google.maps.Marker({
+              position: location,                                 
+              map: map,
+              icon: Finish_Flag
+            });   
+        }
 
-    </script>
-  </head>
-  <body>
-    <div id="map"></div>
-    <br>
-    <br>
-    
-    <div>
-       <!-- Search Form.  INSTEAD OF action going to google/search it has been edited to go to decipher function on Rclaw.py-->
-      <form id="idPOSITION" method="POST" action="{{ url_for('PRINTps') }}">
-      <div class="speech">
-      <input type="text" name="LAT" id="idTEXT1" placeholder="Enter Latitude" />
-      <input type="text" name="LONG" id="idTEXT2" placeholder="Enter Longitude" />
-      <input type="numeric" name="KpLat" id="idTEXT3" placeholder="Enter Proportional Lat" />
-      <input type="numeric" name="KpLong" id="idTEXT4" placeholder="Enter Proportional Long" />
-      
-       <input type="submit" id="idSubmit" />
-      </div>
-      </form>
-      
-    </div>
-    
-    <h1 id="1HEAD">String readings</h1>
-    
-    <br>
-    
-    <h1 id="DestLat">Waiting for input</h1>
-     <h1 id="DestLong">Waiting for input</h1>
-    
-      
-  </body>
+        function addNDVIMarker(thislat, thislong, thiscolor, map) {
+            // Add the marker at the NDVI location
+            // infowindow will show the NDVI and rgb value at that point
+            var custom_icon = "http://i.imgur.com/x19o8Cj.png"
+            var marker = new google.maps.Marker({
+              position: {lat: thislat, lng: thislong},                                
+              map: map,
+              opacity: 0.8,
+              icon: custom_icon
+            });  
+
+            var contentString1 = '<div id="content" >'+
+                '<div id="siteNotice">'+
+                '</div>'+
+                '<h1 id="firstHeading" class="firstHeading">Grass Analysed Readings:</h1>'+
+                '<div id="bodyContent" >'+
+                '<h3>LOCATION:  ' + String(thislat) + ' , ' + String(thislong) + '</h3>' +
+                '<h3>COLOR:  ' + String(thiscolor) +'</h3>' +
+                '</div>'+
+                '</div>';
+                
+            var infowindow1 = new google.maps.InfoWindow({
+                content: contentString1
+            });
+
+            marker.addListener('click', function() {        //makes the info window open
+                infowindow1.open(map, marker);
+                }); 
+            }
+
+        //calculates distance between two points in m
+        function calcDistance(p1, p2) {
+          return (google.maps.geometry.spherical.computeDistanceBetween(p1, p2)).toFixed(2);
+        }
+
+        </script>
+       
+        <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBnxVd-knsd72_9xHvNxiloRkf3uX946QQ&callback=initialize&libraries=geometry,drawing,visualization">
+        </script>
+
+    </body>
 </html>
